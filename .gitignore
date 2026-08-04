@@ -1,1 +1,1 @@
-Nothing needs to be added to .gitignore since only a README.md file was modified and no build artifacts, dependencies, or temporary files were detected in the changes.
+Nothing should be ignored based on the provided file changes. The only file added is a markdown documentation file (DESIGN_SYSTEM.md), which is a source/config file that should not be ignored. There are no build artifacts, dependencies, or temporary files in the changes.
