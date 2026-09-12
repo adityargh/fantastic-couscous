@@ -43,5 +43,3 @@ Setelah brief terisi, jalankan Sprint 1 mengikuti [`docs/02-technical-spec.md`](
 3. **Quality gate otomatis** — performa, aksesibilitas, tautan rusak, dan validitas konten diperiksa mesin di setiap PR. Standar tidak boleh bergantung pada disiplin manual.
 4. **Reuse sebelum build** — sistem visual diturunkan dari `DESIGN_SYSTEM.md` yang sudah ada.
 5. **Scope discipline** — fitur yang dibangun tapi tidak dirawat adalah liabilitas, bukan aset.
-
-<!-- uji auto-commit -->
