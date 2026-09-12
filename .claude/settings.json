@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}/.claude/hooks/auto-commit-push.sh\"",
+            "timeout": 120,
+            "statusMessage": "Auto commit & push ke main..."
+          }
+        ]
+      }
+    ]
+  }
+}
