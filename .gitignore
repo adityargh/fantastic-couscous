@@ -1,1 +1,35 @@
-Nothing should be ignored based on the provided file changes. The only file added is a markdown documentation file (DESIGN_SYSTEM.md), which is a source/config file that should not be ignored. There are no build artifacts, dependencies, or temporary files in the changes.
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+.astro/
+.output/
+
+# Aset hasil generate — jangan pernah di-commit (biner di git menggembungkan repo selamanya)
+public/cv/*.pdf
+public/og/
+
+# Artefak pengujian
+test-results/
+playwright-report/
+blob-report/
+.lighthouseci/
+
+# Lingkungan & secret
+.env
+.env.*
+!.env.example
+
+# Editor & OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Log
+*.log
+npm-debug.log*
+pnpm-debug.log*
