@@ -1,0 +1,301 @@
+{
+  "draft": true,
+  "_readme": "SUMBER KEBENARAN TUNGGAL. Satu berkas ini menghasilkan halaman web, CV cetak, JSON-LD, dan /resume.json. Isi dari docs/01-content-brief.md, lalu set draft:false. Selama draft:true situs otomatis noindex dan menampilkan banner. Aturan yang ditegakkan mesin (src/site.ts): setiap achievement dan setiap highlight WAJIB memuat angka; skill tidak punya field persentase.",
+  "contact": {
+    "web3formsKey": "",
+    "social": [
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/ganti-username"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/adityargh"
+      }
+    ]
+  },
+  "en": {
+    "name": "Aditya Fauzi",
+    "headline": "Operations Excellence Specialist",
+    "positioning": "I help warehouse and fulfilment teams cut cost per order by turning messy processes into measured, repeatable systems.",
+    "location": "Jakarta, Indonesia",
+    "availability": "Open to opportunities",
+    "years": 5,
+    "highlights": [
+      {
+        "value": "-00%",
+        "label": "Order cycle time",
+        "context": "PLACEHOLDER — replace with a real, verifiable figure"
+      },
+      {
+        "value": "00pp",
+        "label": "Inventory accuracy",
+        "context": "PLACEHOLDER — replace with a real, verifiable figure"
+      },
+      {
+        "value": "00x",
+        "label": "Throughput per shift",
+        "context": "PLACEHOLDER — replace with a real, verifiable figure"
+      }
+    ],
+    "experience": [
+      {
+        "title": "Operations Excellence Specialist",
+        "company": "PT Contoh Nusantara",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2023-01",
+        "end": "present",
+        "type": "full-time",
+        "scope": "PLACEHOLDER — e.g. 3 warehouses, 25-person team",
+        "summary": "PLACEHOLDER — one sentence describing the remit of this role.",
+        "achievements": [
+          "PLACEHOLDER — accomplished X as measured by 00% improvement, by doing Z.",
+          "PLACEHOLDER — replaced a 2-hour daily manual report with an automated dashboard, freeing 000 person-hours per year."
+        ],
+        "tools": [
+          "Lean Six Sigma",
+          "SQL",
+          "Power BI",
+          "WMS"
+        ]
+      },
+      {
+        "title": "Process Improvement Analyst",
+        "company": "PT Contoh Logistik",
+        "industry": "3PL",
+        "location": "Bekasi, ID",
+        "start": "2021-03",
+        "end": "2022-12",
+        "type": "full-time",
+        "scope": "PLACEHOLDER — scope of this role",
+        "summary": "PLACEHOLDER — one sentence describing the remit of this role.",
+        "achievements": [
+          "PLACEHOLDER — accomplished X as measured by 00 units, by doing Z."
+        ],
+        "tools": [
+          "Value Stream Mapping",
+          "Excel",
+          "SOP design"
+        ]
+      }
+    ],
+    "skills": [
+      {
+        "domain": "Process Excellence",
+        "items": [
+          {
+            "name": "Lean Six Sigma",
+            "level": "expert"
+          },
+          {
+            "name": "Root Cause Analysis",
+            "level": "expert"
+          },
+          {
+            "name": "Value Stream Mapping",
+            "level": "proficient"
+          }
+        ]
+      },
+      {
+        "domain": "Supply Chain & Warehouse",
+        "items": [
+          {
+            "name": "Inventory Planning",
+            "level": "expert"
+          },
+          {
+            "name": "Layout Optimisation",
+            "level": "proficient"
+          },
+          {
+            "name": "Demand Forecasting",
+            "level": "familiar"
+          }
+        ]
+      },
+      {
+        "domain": "Data & Analytics",
+        "items": [
+          {
+            "name": "SQL",
+            "level": "proficient"
+          },
+          {
+            "name": "Power BI",
+            "level": "proficient"
+          },
+          {
+            "name": "Statistical Process Control",
+            "level": "familiar"
+          }
+        ]
+      }
+    ],
+    "education": [
+      {
+        "kind": "degree",
+        "name": "PLACEHOLDER — Degree, Field",
+        "institution": "PLACEHOLDER — University",
+        "year": "2020"
+      },
+      {
+        "kind": "certification",
+        "name": "PLACEHOLDER — Certification",
+        "institution": "PLACEHOLDER — Issuer",
+        "year": "2023",
+        "url": ""
+      }
+    ],
+    "about": [
+      "PLACEHOLDER — Paragraph 1: how you got into this field (~100 words).",
+      "PLACEHOLDER — Paragraph 2: how you work. Your operating philosophy. What you believe about process, data and people (~150 words).",
+      "PLACEHOLDER — Paragraph 3: what you are learning right now (~100 words).",
+      "PLACEHOLDER — Paragraph 4: one or two human sentences about life outside work."
+    ],
+    "contactIntro": "Got an operational problem worth pulling apart? I usually reply within one working day."
+  },
+  "id": {
+    "name": "Aditya Fauzi",
+    "headline": "Operations Excellence Specialist",
+    "positioning": "Saya membantu tim gudang dan fulfilment menurunkan biaya per order dengan mengubah proses yang berantakan menjadi sistem yang terukur dan berulang.",
+    "location": "Jakarta, Indonesia",
+    "availability": "Terbuka untuk peluang baru",
+    "years": 5,
+    "highlights": [
+      {
+        "value": "-00%",
+        "label": "Order cycle time",
+        "context": "PLACEHOLDER — ganti dengan angka nyata yang dapat diverifikasi"
+      },
+      {
+        "value": "00pp",
+        "label": "Akurasi inventori",
+        "context": "PLACEHOLDER — ganti dengan angka nyata yang dapat diverifikasi"
+      },
+      {
+        "value": "00x",
+        "label": "Throughput per shift",
+        "context": "PLACEHOLDER — ganti dengan angka nyata yang dapat diverifikasi"
+      }
+    ],
+    "experience": [
+      {
+        "title": "Operations Excellence Specialist",
+        "company": "PT Contoh Nusantara",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2023-01",
+        "end": "present",
+        "type": "full-time",
+        "scope": "PLACEHOLDER — mis. 3 gudang, tim 25 orang",
+        "summary": "PLACEHOLDER — satu kalimat yang menjelaskan cakupan peran ini.",
+        "achievements": [
+          "PLACEHOLDER — mencapai X terukur lewat perbaikan 00%, dengan melakukan Z.",
+          "PLACEHOLDER — mengganti pelaporan manual harian 2 jam dengan dashboard otomatis, membebaskan 000 jam-orang per tahun."
+        ],
+        "tools": [
+          "Lean Six Sigma",
+          "SQL",
+          "Power BI",
+          "WMS"
+        ]
+      },
+      {
+        "title": "Process Improvement Analyst",
+        "company": "PT Contoh Logistik",
+        "industry": "3PL",
+        "location": "Bekasi, ID",
+        "start": "2021-03",
+        "end": "2022-12",
+        "type": "full-time",
+        "scope": "PLACEHOLDER — cakupan peran ini",
+        "summary": "PLACEHOLDER — satu kalimat yang menjelaskan cakupan peran ini.",
+        "achievements": [
+          "PLACEHOLDER — mencapai X terukur sebesar 00 unit, dengan melakukan Z."
+        ],
+        "tools": [
+          "Value Stream Mapping",
+          "Excel",
+          "Desain SOP"
+        ]
+      }
+    ],
+    "skills": [
+      {
+        "domain": "Process Excellence",
+        "items": [
+          {
+            "name": "Lean Six Sigma",
+            "level": "expert"
+          },
+          {
+            "name": "Root Cause Analysis",
+            "level": "expert"
+          },
+          {
+            "name": "Value Stream Mapping",
+            "level": "proficient"
+          }
+        ]
+      },
+      {
+        "domain": "Supply Chain & Gudang",
+        "items": [
+          {
+            "name": "Inventory Planning",
+            "level": "expert"
+          },
+          {
+            "name": "Optimasi Layout",
+            "level": "proficient"
+          },
+          {
+            "name": "Demand Forecasting",
+            "level": "familiar"
+          }
+        ]
+      },
+      {
+        "domain": "Data & Analitik",
+        "items": [
+          {
+            "name": "SQL",
+            "level": "proficient"
+          },
+          {
+            "name": "Power BI",
+            "level": "proficient"
+          },
+          {
+            "name": "Statistical Process Control",
+            "level": "familiar"
+          }
+        ]
+      }
+    ],
+    "education": [
+      {
+        "kind": "degree",
+        "name": "PLACEHOLDER — Gelar, Bidang",
+        "institution": "PLACEHOLDER — Universitas",
+        "year": "2020"
+      },
+      {
+        "kind": "certification",
+        "name": "PLACEHOLDER — Sertifikasi",
+        "institution": "PLACEHOLDER — Penerbit",
+        "year": "2023",
+        "url": ""
+      }
+    ],
+    "about": [
+      "PLACEHOLDER — Paragraf 1: bagaimana Anda sampai di bidang ini (±100 kata).",
+      "PLACEHOLDER — Paragraf 2: bagaimana Anda bekerja. Filosofi operasional Anda. Apa yang Anda percayai soal proses, data, dan manusia (±150 kata).",
+      "PLACEHOLDER — Paragraf 3: apa yang sedang Anda dalami sekarang (±100 kata).",
+      "PLACEHOLDER — Paragraf 4: satu-dua kalimat manusiawi tentang hidup di luar pekerjaan."
+    ],
+    "contactIntro": "Punya tantangan operasional yang perlu dibedah? Saya biasanya membalas dalam 1x24 jam kerja."
+  }
+}

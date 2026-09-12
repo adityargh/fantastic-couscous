@@ -1,0 +1,76 @@
+---
+import Layout from '../../Layout.astro';
+import { CONTACT, langPaths, profileOf, periodLabel, t, type Lang } from '../../site';
+
+export const getStaticPaths = langPaths;
+type Props = { lang: Lang };
+
+const { lang } = Astro.props;
+const p = profileOf(lang);
+const tr = t(lang);
+---
+<Layout
+  lang={lang}
+  path="/cv"
+  title={`${tr('cv.title')} — ${p.name}`}
+  description={`${tr('cv.title')} ${p.name} — ${p.headline}.`}
+>
+  <div class="wrap">
+    <section class="band cv">
+      <p class="notice no-print" style="margin-bottom:var(--lg)">
+        {tr('cv.hint')}
+      </p>
+      <p class="no-print" style="margin-bottom:var(--xl)">
+        <button class="btn btn-primary" type="button" id="print-cv">{tr('cv.print')}</button>
+      </p>
+
+      <header class="stack stack-sm">
+        <h1>{p.name}</h1>
+        <p class="role">{p.headline}</p>
+        <p class="cv-head muted">
+          <span>{p.location}</span>
+          {CONTACT.social.map((s) => <a href={s.url} rel="noopener">{s.label}</a>)}
+        </p>
+        <p class="muted">{p.positioning}</p>
+      </header>
+
+      <section>
+        <h2>{tr('sec.experience')}</h2>
+        <div class="stack stack-md">
+          {p.experience.map((r) => (
+            <article class="role-item">
+              <p class="role-when">{periodLabel(r.start, r.end, lang)}</p>
+              <h3>{r.title} — {r.company}</h3>
+              <p class="role-where">{r.location}{r.scope ? ` · ${r.scope}` : ''}</p>
+              <ul>{r.achievements.map((a) => <li>{a}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2>{tr('sec.skills')}</h2>
+        <ul style="list-style:none;padding:0" class="stack stack-sm">
+          {p.skills.map((g) => (
+            <li><strong>{g.domain}:</strong> {g.items.map((i) => i.name).join(', ')}</li>
+          ))}
+        </ul>
+      </section>
+
+      {p.education.length > 0 && (
+        <section>
+          <h2>{tr('sec.education')}</h2>
+          <ul style="list-style:none;padding:0" class="stack stack-sm">
+            {p.education.map((e) => (
+              <li>{e.name} — {e.institution}, {e.year}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </section>
+  </div>
+
+  <script is:inline>
+    document.getElementById('print-cv')?.addEventListener('click', function () { window.print(); });
+  </script>
+</Layout>

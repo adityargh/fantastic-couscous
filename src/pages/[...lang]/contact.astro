@@ -1,0 +1,69 @@
+---
+import Layout from '../../Layout.astro';
+import { CONTACT, langPaths, profileOf, t, type Lang } from '../../site';
+
+export const getStaticPaths = langPaths;
+type Props = { lang: Lang };
+
+const { lang } = Astro.props;
+const p = profileOf(lang);
+const tr = t(lang);
+const key = CONTACT.web3formsKey.trim();
+---
+<Layout
+  lang={lang}
+  path="/contact"
+  title={`${tr('nav.contact')} — ${p.name}`}
+  description={p.contactIntro}
+>
+  <div class="wrap">
+    <section class="band" style="max-width:640px">
+      <div class="band-head">
+        <p class="eyebrow">{tr('nav.contact')}</p>
+        <h1>{tr('cta.title')}</h1>
+        <p class="lede">{p.contactIntro}</p>
+      </div>
+
+      {key ? (
+        <form action="https://api.web3forms.com/submit" method="POST" class="stack stack-lg">
+          <input type="hidden" name="access_key" value={key} />
+          <input type="hidden" name="subject" value={`Kontak baru dari website ${p.name}`} />
+          <input type="hidden" name="from_name" value={p.name} />
+
+          {/* Honeypot. Web3Forms menolak kiriman yang mengisi field ini. */}
+          <div class="hp" aria-hidden="true">
+            <label for="botcheck">Leave this empty</label>
+            <input id="botcheck" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="field">
+            <label for="name">{tr('form.name')} <span class="req" aria-hidden="true">*</span></label>
+            <input id="name" name="name" type="text" required autocomplete="name" maxlength="80" />
+          </div>
+
+          <div class="field">
+            <label for="email">{tr('form.email')} <span class="req" aria-hidden="true">*</span></label>
+            <input id="email" name="email" type="email" required autocomplete="email" maxlength="120" />
+          </div>
+
+          <div class="field">
+            <label for="message">{tr('form.message')} <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="message" name="message" required minlength="20" maxlength="4000"
+              aria-describedby="message-hint"></textarea>
+            <p id="message-hint" class="hint">{tr('form.help')}</p>
+          </div>
+
+          <p><button class="btn btn-primary" type="submit">{tr('form.send')}</button></p>
+        </form>
+      ) : (
+        <p class="notice">{tr('form.unconfigured')}</p>
+      )}
+
+      <ul class="linklist stack stack-sm" style="margin-top:var(--xl)">
+        {CONTACT.social.map((s) => (
+          <li><a href={s.url} rel="me noopener">{s.label}</a></li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Layout>

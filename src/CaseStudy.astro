@@ -1,0 +1,80 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Layout from './Layout.astro';
+import { hrefFor, profileOf, t, type Lang } from './site';
+
+interface Props { entry: CollectionEntry<'projects'>; lang: Lang }
+const { entry, lang } = Astro.props;
+
+const { Content } = await render(entry);
+const p = profileOf(lang);
+const tr = t(lang);
+const d = entry.data;
+const site = Astro.site ?? new URL('https://fantastic-couscous.pages.dev');
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.description,
+  inLanguage: lang,
+  author: { '@type': 'Person', name: p.name },
+  url: new URL(hrefFor(lang, `/projects/${d.slug}`), site).href,
+};
+---
+<Layout
+  lang={lang}
+  path={`/projects/${d.slug}`}
+  title={`${d.title} — ${p.name}`}
+  description={d.description}
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <article class="band">
+      <div class="band-head">
+        <p class="eyebrow">{d.tags.join(' · ')}</p>
+        <h1>{d.title}</h1>
+        <p class="lede">{d.description}</p>
+      </div>
+
+      <div class="tablewrap" style="margin-bottom:var(--xl)">
+        <table>
+          <tbody>
+            <tr><td>{tr('proj.result')}</td><td>{d.headline}</td></tr>
+            <tr><td>{tr('proj.role')}</td><td>{d.role}</td></tr>
+            <tr><td>{tr('proj.period')}</td><td>{d.period}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="prose"><Content /></div>
+
+      <h2 style="margin-top:var(--xxl);margin-bottom:var(--md)">{tr('proj.metrics')}</h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{tr('proj.metrics')}</th>
+              <th scope="col">{tr('proj.before')}</th>
+              <th scope="col">{tr('proj.after')}</th>
+              <th scope="col">{tr('proj.delta')}</th>
+              <th scope="col">{tr('proj.window')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {d.metrics.map((m) => (
+              <tr>
+                <td>{m.name}</td><td>{m.before}</td><td>{m.after}</td>
+                <td>{m.delta}</td><td>{m.window}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:var(--xl)">
+        <a class="backlink" href={hrefFor(lang, '/projects')}>&larr; {tr('proj.back')}</a>
+      </p>
+    </article>
+  </div>
+</Layout>

@@ -1,0 +1,117 @@
+---
+import './styles.css';
+import { DRAFT, CONTACT, HTML_LANG, LOCALES, DEFAULT_LANG, hrefFor, profileOf, t, type Lang } from './site';
+
+interface Props {
+  lang: Lang;
+  /** Rute logis tanpa prefiks bahasa, mis. '/about'. Dipakai untuk nav aktif + hreflang. */
+  path: string;
+  title: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const { lang, path, title, description, jsonLd } = Astro.props;
+const p = profileOf(lang);
+const tr = t(lang);
+const other: Lang = lang === 'en' ? 'id' : 'en';
+const site = Astro.site ?? new URL('https://fantastic-couscous.pages.dev');
+const canonical = new URL(hrefFor(lang, path), site);
+const initials = p.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+
+const nav = [
+  { key: 'nav.about', to: '/about' },
+  { key: 'nav.projects', to: '/projects' },
+  { key: 'nav.cv', to: '/cv' },
+  { key: 'nav.contact', to: '/contact' },
+] as const;
+---
+<!doctype html>
+<html lang={HTML_LANG[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    {/* Konten placeholder tidak boleh terindeks. Penjaga otomatis, bukan ingatan. */}
+    {DRAFT && <meta name="robots" content="noindex, nofollow" />}
+
+    {LOCALES.map((l) => (
+      <link rel="alternate" hreflang={HTML_LANG[l]} href={new URL(hrefFor(l, path), site).href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL(hrefFor(DEFAULT_LANG, path), site).href} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:locale" content={HTML_LANG[lang].replace('-', '_')} />
+    <meta name="twitter:card" content="summary" />
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    {/* Satu-satunya skrip render-blocking: ±120 byte, mencegah flash tema. */}
+    <script is:inline>
+      try { var s = localStorage.getItem('theme'); if (s) document.documentElement.dataset.theme = s; } catch (e) {}
+    </script>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">{tr('ui.skip')}</a>
+    {DRAFT && <p class="banner">{tr('ui.draft')}</p>}
+
+    <header class="site-head">
+      <div class="wrap">
+        <a class="brand" href={hrefFor(lang, '/')}>
+          <span class="monogram" aria-hidden="true">{initials}</span>
+          <span>{p.name}</span>
+        </a>
+        <nav class="site-nav" aria-label={lang === 'id' ? 'Navigasi utama' : 'Main navigation'}>
+          {nav.map((item) => (
+            <a href={hrefFor(lang, item.to)} aria-current={path === item.to ? 'page' : undefined}>
+              {tr(item.key)}
+            </a>
+          ))}
+          <a href={hrefFor(other, path)} hreflang={HTML_LANG[other]} rel="alternate">
+            {other.toUpperCase()}
+          </a>
+          <button id="theme-toggle" class="iconbtn" type="button" aria-label={tr('ui.theme')}>
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5" />
+              <path d="M8 1a7 7 0 0 0 0 14z" fill="currentColor" />
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <span>© {new Date().getFullYear()} {p.name}</span>
+        <span class="spacer"></span>
+        {CONTACT.social.map((s) => (
+          <a href={s.url} rel="me noopener">{s.label}</a>
+        ))}
+        <a href="/resume.json">resume.json</a>
+      </div>
+    </footer>
+
+    <script is:inline>
+      document.getElementById('theme-toggle')?.addEventListener('click', function () {
+        var el = document.documentElement;
+        var cur = el.dataset.theme ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        var next = cur === 'dark' ? 'light' : 'dark';
+        el.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

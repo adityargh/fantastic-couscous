@@ -219,6 +219,46 @@ Format: `Status · Tanggal · Keputusan · Konteks · Alternatif · Konsekuensi`
 
 ---
 
+## ADR-009 — Kompaksi MVP: nol integrasi, nol dependensi runtime
+
+**Status:** Diterima · 12 Sep 2026 · Menggantikan sebagian ADR-003, ADR-005 dan ADR-008
+
+**Keputusan:** MVP dibangun dengan satu dependensi runtime (`astro`), tanpa integrasi Astro, tanpa framework CSS, tanpa web font, dan tanpa gambar.
+
+**Konteks:** Pemilik repositori meminta MVP dengan pola pikir hemat direktori/berkas dan hemat energi, sehingga menghasilkan situs yang ringan, mudah diakses, dan fleksibel. Spesifikasi teknis awal (`docs/02-technical-spec.md`) merancang struktur yang lebih konvensional — Tailwind, `@astrojs/sitemap`, `src/components/{layout,sections,ui}`, `src/i18n/`, `src/content/` untuk seluruh data. Untuk situs berisi 15 halaman, struktur itu menambah berkas tanpa menambah kejelasan.
+
+**Perubahan yang diterapkan:**
+
+| # | Keputusan | Menggantikan | Alasan |
+| :-- | :--- | :--- | :--- |
+| 1 | Tailwind dihapus; satu berkas `src/styles.css` ditulis tangan | ADR-008 (bagian Tailwind; turunan token tetap berlaku) | Menghapus satu dependensi dan satu build step. Keluarannya lebih kecil daripada Tailwind yang sudah ter-purge |
+| 2 | Nol integrasi Astro; `sitemap.xml` ditulis tangan (±30 baris) | — | Lebih kecil daripada `@astrojs/sitemap`, dan memberi kendali penuh atas `hreflang` |
+| 3 | Rute `[...lang]` melayani kedua bahasa dari satu berkas; ID memakai slug Inggris (`/id/about`, bukan `/id/tentang`) | ADR-003 (bagian slug terjemahan) | Memangkas jumlah berkas halaman setengahnya dan menyederhanakan pemetaan `hreflang` |
+| 4 | Seluruh data resume di satu `src/data.json` berisi kedua bahasa berdampingan, divalidasi Zod di `src/site.ts` | ADR-004 (bentuk penyimpanan; prinsipnya tetap) | Prinsip sumber kebenaran tunggal dan validasi saat build dipertahankan tanpa pohon `src/content/`. Bahasa yang berdampingan justru **menurunkan** risiko drift terjemahan |
+| 5 | Nol web font — hanya font sistem | Spesifikasi teknis §4 (1 berkas WOFF2) | Menghemat ±60 KB dan satu permintaan jaringan pada setiap kunjungan pertama |
+| 6 | Nol gambar — monogram inisial dari CSS, favicon SVG 230 byte | — | Foto profil bersifat opsional dan dapat ditambahkan nanti; baseline-nya nol byte gambar |
+| 7 | CSS disisipkan ke dalam HTML (`inlineStylesheets: 'always'`) | — | Menghapus satu round-trip render-blocking. Hasilnya satu halaman = satu permintaan HTTP |
+| 8 | CV: rute cetak `/cv` dari data yang sama; Playwright tidak lagi berjalan di setiap build | ADR-005 (bagian "setiap build") | Jaminan anti-drift tetap utuh karena `/cv` dibangkitkan dari sumber data yang sama. Menghapus unduhan Chromium ±130 MB dari pipeline. `pnpm pdf` tetap tersedia bila ingin berkas `.pdf` yang dihosting |
+| 9 | Flag `draft` di `data.json` memaksa `noindex` dan memunculkan banner | — | Konten placeholder tidak akan pernah terindeks karena kelalaian |
+| 10 | Turnstile dilepas; anti-spam mengandalkan honeypot yang benar-benar ditegakkan Web3Forms | ADR-006 (bagian Turnstile) | Menghapus skrip pihak ketiga, mengencangkan CSP, dan menghilangkan hambatan aksesibilitas. Turnstile dapat ditambahkan bila spam benar-benar muncul |
+
+**Dua jebakan yang ditemukan saat implementasi — dicatat agar tidak terulang:**
+
+1. **Rest parameter tidak boleh diikuti parameter dinamis lain.** `[...lang]/projects/[slug].astro` ter-build tanpa galat tetapi **diam-diam membuang seluruh halaman ID**. Rute studi kasus karena itu ditulis eksplisit per bahasa (`projects/[slug].astro` dan `id/projects/[slug].astro`), keduanya pembungkus tipis di atas `src/CaseStudy.astro`.
+2. **`generateId` bawaan glob loader memotong nama berkas pada titik PERTAMA.** `cycle-time.en.md` dan `cycle-time.id.md` menghasilkan id yang sama, sehingga entri kedua tertimpa tanpa peringatan. Diperbaiki dengan `generateId` eksplisit di `src/content.config.ts`.
+
+**Konsekuensi:**
+- ✅ Beranda **5,5 KB gzip**, nol berkas CSS/JS terpisah, nol permintaan pihak ketiga — satu halaman = satu permintaan HTTP
+- ✅ Nol scroll horizontal terverifikasi pada 320/360/390/768 px di seluruh halaman
+- ✅ `/cv` mencetak satu halaman A4 dengan teks nyata yang dapat diseleksi (ramah ATS)
+- ✅ Permukaan dependensi sangat kecil: satu paket runtime, sehingga audit keamanan dan upgrade jadi murah
+- ⚠️ CSS ditulis tangan berarti tidak ada jaring pengaman utilitas; penambahan komponen menuntut disiplin agar `styles.css` tidak membengkak
+- ⚠️ CSS yang di-inline terkirim ulang pada setiap halaman. Trade-off yang diterima karena mayoritas pengunjung hanya membuka satu-dua halaman; tinjau ulang bila situs tumbuh melewati ±10 halaman konten
+- ⚠️ Slug ID berbahasa Inggris sedikit kurang natural bagi pembaca Indonesia
+- ⚠️ **Ditunda ke luar MVP:** rangkaian uji Playwright + axe-core + Lighthouse CI (Sprint 6), studi kasus ketiga, OG image, dan `_redirects`. CI saat ini menjalankan `astro check` + build + verifikasi keberadaan halaman kunci
+
+---
+
 ## Template ADR Baru
 
 Salin blok ini setiap kali membuat keputusan arsitektural yang signifikan. Perubahan ruang lingkup **harus** melewati sini, bukan diputuskan diam-diam di tengah implementasi.

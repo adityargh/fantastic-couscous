@@ -1,0 +1,50 @@
+---
+import Layout from '../../Layout.astro';
+import { langPaths, profileOf, t, type Lang } from '../../site';
+
+export const getStaticPaths = langPaths;
+type Props = { lang: Lang };
+
+const { lang } = Astro.props;
+const p = profileOf(lang);
+const tr = t(lang);
+---
+<Layout
+  lang={lang}
+  path="/about"
+  title={`${tr('sec.about')} — ${p.name}`}
+  description={p.positioning}
+>
+  <div class="wrap">
+    <section class="band">
+      <div class="band-head">
+        <p class="eyebrow">{tr('sec.about')}</p>
+        <h1>{p.name}</h1>
+      </div>
+      <div class="prose">
+        {p.about.map((para) => <p>{para}</p>)}
+      </div>
+    </section>
+
+    {p.education.length > 0 && (
+      <section class="band" aria-labelledby="edu">
+        <div class="band-head">
+          <h2 id="edu">{tr('sec.education')}</h2>
+        </div>
+        <div class="tablewrap">
+          <table>
+            <tbody>
+              {p.education.map((e) => (
+                <tr>
+                  <td>{e.url ? <a href={e.url} rel="noopener">{e.name}</a> : e.name}</td>
+                  <td>{e.institution}</td>
+                  <td>{e.year}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+  </div>
+</Layout>

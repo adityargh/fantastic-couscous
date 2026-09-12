@@ -1,0 +1,142 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../Layout.astro';
+import { CONTACT, langPaths, hrefFor, profileOf, periodLabel, t, type Lang } from '../../site';
+
+export const getStaticPaths = langPaths;
+type Props = { lang: Lang };
+
+const { lang } = Astro.props;
+const p = profileOf(lang);
+const tr = t(lang);
+const site = Astro.site ?? new URL('https://fantastic-couscous.pages.dev');
+
+const featured = (await getCollection('projects', (e) => e.data.lang === lang && e.data.featured))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: p.name,
+  jobTitle: p.headline,
+  description: p.positioning,
+  url: new URL(hrefFor(lang, '/'), site).href,
+  address: { '@type': 'PostalAddress', addressLocality: p.location },
+  sameAs: CONTACT.social.map((s) => s.url),
+  knowsAbout: p.skills.flatMap((g) => g.items.map((i) => i.name)),
+};
+---
+<Layout
+  lang={lang}
+  path="/"
+  title={`${p.name} — ${p.headline}`}
+  description={p.positioning}
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <!-- Hero: menjawab siapa / apa / buktinya dalam satu layar -->
+    <section class="hero stack stack-md">
+      <p class="eyebrow">{p.headline}</p>
+      <h1>{p.name}</h1>
+      <p class="positioning">{p.positioning}</p>
+      <p class="meta-row">
+        <span>{p.location}</span>
+        <span>{p.years}+ {lang === 'id' ? 'tahun pengalaman' : 'years experience'}</span>
+        <span>{tr('hero.available')}: {p.availability}</span>
+      </p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href={hrefFor(lang, '/projects')}>{tr('hero.caseStudies')}</a>
+        <a class="btn btn-ghost" href={hrefFor(lang, '/cv')}>{tr('hero.downloadCv')}</a>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="impact">
+      <div class="band-head">
+        <p class="eyebrow">01</p>
+        <h2 id="impact">{tr('sec.impact')}</h2>
+      </div>
+      <div class="metrics">
+        {p.highlights.map((h) => (
+          <div class="metric">
+            <span class="v">{h.value}</span>
+            <span class="k">{h.label}</span>
+            <span class="c">{h.context}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="exp">
+      <div class="band-head">
+        <p class="eyebrow">02</p>
+        <h2 id="exp">{tr('sec.experience')}</h2>
+      </div>
+      <div class="roles">
+        {p.experience.map((r) => (
+          <article class="role-item">
+            <p class="role-when">{periodLabel(r.start, r.end, lang)}</p>
+            <h3>{r.title}</h3>
+            <p class="role-where">
+              {r.company}{r.industry ? ` · ${r.industry}` : ''} · {r.location}
+              {r.scope ? <><br /><span class="muted">{r.scope}</span></> : null}
+            </p>
+            <p class="muted">{r.summary}</p>
+            <ul>{r.achievements.map((a) => <li>{a}</li>)}</ul>
+            {r.tools.length > 0 && (
+              <p class="tags">{r.tools.map((tool) => <span class="tag">{tool}</span>)}</p>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="skills">
+      <div class="band-head">
+        <p class="eyebrow">03</p>
+        <h2 id="skills">{tr('sec.skills')}</h2>
+      </div>
+      <div class="skill-groups">
+        {p.skills.map((g) => (
+          <div class="skill-group">
+            <h3>{g.domain}</h3>
+            <ul>
+              {g.items.map((i) => (
+                <li><span>{i.name}</span><span>{tr(`level.${i.level}` as const)}</span></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {featured.length > 0 && (
+      <section class="band" aria-labelledby="cases">
+        <div class="band-head">
+          <p class="eyebrow">04</p>
+          <h2 id="cases">{tr('sec.featured')}</h2>
+        </div>
+        <div class="cards">
+          {featured.map((c) => (
+            <a class="card" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
+              <p class="result">{c.data.headline}</p>
+              <h3>{c.data.title}</h3>
+              <p>{c.data.description}</p>
+              <p class="tags">{c.data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="band" aria-labelledby="cta">
+      <div class="band-head">
+        <p class="eyebrow">05</p>
+        <h2 id="cta">{tr('cta.title')}</h2>
+      </div>
+      <p class="lede">{tr('cta.body')}</p>
+      <p class="btn-row" style="margin-top:var(--md)">
+        <a class="btn btn-primary" href={hrefFor(lang, '/contact')}>{tr('cta.button')}</a>
+      </p>
+    </section>
+  </div>
+</Layout>

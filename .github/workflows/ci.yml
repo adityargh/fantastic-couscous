@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+
+# Batalkan run yang sudah tertimpa push baru — hemat energi dan kuota.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: pnpm }
+
+      - run: pnpm install --frozen-lockfile
+
+      # `astro check` memvalidasi TypeScript DAN skema konten.
+      # data.json atau frontmatter yang melanggar aturan akan menggagalkan build.
+      - run: pnpm build
+
+      - name: Pastikan halaman kunci benar-benar ter-generate
+        run: |
+          for f in index.html id/index.html about/index.html id/about/index.html \
+                   projects/index.html cv/index.html id/cv/index.html \
+                   contact/index.html 404.html sitemap.xml resume.json; do
+            test -s "dist/$f" || { echo "::error::dist/$f tidak dihasilkan"; exit 1; }
+          done
+          echo "Semua halaman kunci ada."

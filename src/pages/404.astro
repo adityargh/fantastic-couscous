@@ -1,0 +1,22 @@
+---
+import Layout from '../Layout.astro';
+import { DEFAULT_LANG, hrefFor, profileOf, t } from '../site';
+
+const lang = DEFAULT_LANG;
+const p = profileOf(lang);
+const tr = t(lang);
+---
+<Layout lang={lang} path="/" title={`404 — ${p.name}`} description={tr('ui.notFoundBody')}>
+  <div class="wrap">
+    <section class="band">
+      <div class="band-head">
+        <p class="eyebrow">404</p>
+        <h1>{tr('ui.notFound')}</h1>
+      </div>
+      <p class="lede">{tr('ui.notFoundBody')}</p>
+      <p class="btn-row" style="margin-top:var(--lg)">
+        <a class="btn btn-primary" href={hrefFor(lang, '/')}>{tr('ui.home')}</a>
+      </p>
+    </section>
+  </div>
+</Layout>
