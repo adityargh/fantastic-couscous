@@ -295,6 +295,20 @@ main { display: block; }
 }
 .iconbtn:hover { background: var(--surface-2); color: var(--ink); }
 
+/* Ponsel: header 3 baris memakan ~220 px dari layar pertama — mahal untuk
+   pembaca 30 detik. Rapatkan nav dan sembunyikan baris jabatan agar cukup
+   2 baris, tanpa menyembunyikan tautan di balik menu hamburger (yang butuh
+   JS, menambah satu ketukan, dan menyembunyikan struktur dari screen reader). */
+@media (max-width: 480px) {
+  .site-head > .wrap { min-height: 56px; gap: var(--s2); }
+  .brand-sub { display: none; }
+  .site-nav { gap: 0; }
+  .site-nav a { padding-inline: var(--s2); font-size: 0.9rem; }
+  .site-nav a[aria-current="page"]::before { margin-right: 5px; }
+  .nav-sep { display: none; }
+  .lang-switch { margin-left: var(--s1); }
+}
+
 .banner {
   margin: 0; padding: var(--s2) var(--s5); text-align: center;
   background: var(--warn-tint); color: var(--warn);
