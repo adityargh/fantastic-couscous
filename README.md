@@ -6,7 +6,7 @@ Resume digital bilingual (EN/ID) berupa situs statis. Ringan, mudah diakses, ber
 | :--- | :--- |
 | **Status** | **Live** · `draft: false` · disetujui pemilik 14 Sep 2026 |
 | **Stack** | Astro 5 · TypeScript · CSS tulis tangan · **satu dependensi runtime** |
-| **Hosting** | Cloudflare Pages (free tier) — `aditya-fauzi.pages.dev` |
+| **Hosting** | Cloudflare Workers Static Assets (free tier) — lihat ADR-012 |
 | **Bahasa** | English (default) + Bahasa Indonesia |
 | **Biaya** | Rp 0 / bulan |
 | **Halaman** | 21 · **beranda 10,6 KB gzip** · nol berkas CSS/JS terpisah · nol permintaan pihak ketiga |
@@ -99,20 +99,26 @@ dengan presisi, angka, dan standar tertulis, jadi antarmukanya terasa seperti pa
 - Nol kegagalan WCAG AA — 8 halaman × 2 tema (kontras, urutan heading, nama aksesibel, target sentuh)
 - CV PDF 1 halaman A4, teks dapat diseleksi (ramah ATS)
 
-## Deploy — Cloudflare Pages
+## Deploy — Cloudflare Workers (Static Assets)
+
+Rencana awal memakai Cloudflare Pages (ADR-002); Cloudflare mengarahkan repositori
+baru ke Workers, jadi ADR-012 mengikuti ke sana. Konfigurasinya ada di
+[`wrangler.jsonc`](wrangler.jsonc) — tanpa `main`, karena situs ini 100% statis.
 
 | Setelan | Nilai |
 | :--- | :--- |
-| Build command | `pnpm build` |
-| Output directory | `dist` |
-| Production branch | `main` |
+| Build command | `pnpm install --frozen-lockfile && pnpm build` |
+| Deploy command | `npx wrangler deploy` (produksi) |
 | Node version | dari `.nvmrc` (22) |
+| Nama Worker | **harus sama persis** dengan `name` di `wrangler.jsonc` |
+| `SITE_URL` | URL produksi final — setel sebagai variabel lingkungan build |
 
-**Nama proyek Cloudflare harus `aditya-fauzi`** — subdomain `*.pages.dev` unik secara global,
-dan `fantastic-couscous.pages.dev` sudah dimiliki pihak lain (diperiksa 14 Sep 2026).
+**Ganti domain = satu variabel lingkungan, nol suntingan kode.** Setel `SITE_URL` di
+setelan build Cloudflare; canonical, hreflang, sitemap, `robots.txt`, JSON-LD, `og:image`,
+dan `resume.json` semuanya mengikuti. Literal di `astro.config.mjs` hanya cadangan build lokal.
 
-Ganti domain = **2 suntingan**: `site` di `astro.config.mjs` dan `FALLBACK_SITE` di `src/site.ts`.
-`robots.txt`, sitemap, canonical, hreflang, dan OG mengikuti otomatis.
+Catatan: `fantastic-couscous.pages.dev` sudah dimiliki pihak lain (diperiksa 14 Sep 2026),
+jadi nama itu tidak tersedia.
 
 ## Kontak
 

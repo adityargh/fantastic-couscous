@@ -400,6 +400,57 @@ Audit ulang: **nol temuan.**
 
 ---
 
+## ADR-012 — Cloudflare Workers Static Assets, bukan Pages
+
+**Status:** Diterima · 14 Sep 2026 · Menggantikan ADR-002 (bagian platform)
+
+**Keputusan:** Situs di-deploy sebagai Worker beraset statis (`wrangler.jsonc` + `assets.directory`), bukan proyek Cloudflare Pages.
+
+**Konteks:** ADR-002 memilih Cloudflare Pages. Ketika repositori benar-benar dihubungkan, Cloudflare mengarahkannya ke Workers dan menjalankan `npx wrangler versions upload` sebagai perintah deploy. Build **berhasil** (21 halaman, `astro check` 0/0/0) lalu deploy gagal:
+
+```
+✘ [ERROR] Missing entry-point to Worker script or to assets directory
+```
+
+Perintah itu menuntut berkas konfigurasi; repositori tidak punya. Kegagalan ini terjadi dua kali berturut-turut sebelum akar masalahnya ditemukan.
+
+**Mengapa mengikuti, bukan melawan:** Pages kini berstatus pemeliharaan di Cloudflare dan Workers Static Assets adalah jalur yang dikembangkan. Memaksa kembali ke Pages berarti memilih platform yang menyusut demi menghindari satu berkas konfigurasi.
+
+**Yang dipasang — `wrangler.jsonc`:**
+
+| Field | Nilai | Alasan |
+| :--- | :--- | :--- |
+| *(tanpa `main`)* | — | Situs 100% statis. Worker-nya hanya menyajikan aset; nol baris kode server, sehingga permukaan serangan dan biaya CPU tetap nol |
+| `name` | `aditya-fauzi` | **Harus sama persis dengan nama Worker di dasbor.** Kalau berbeda, wrangler akan men-deploy ke Worker lain |
+| `assets.directory` | `./dist` | Keluaran build Astro |
+| `assets.html_handling` | `auto-trailing-slash` | Menyajikan `dist/about/index.html` di `/about` dan mengalihkan `/about/` ke `/about` — cocok dengan canonical situs ini (tanpa garis miring akhir), jadi perayap tidak menemui rantai redirect |
+| `assets.not_found_handling` | `404-page` | URL tak dikenal menyajikan 404 kustom, bukan 404 telanjang |
+
+`public/_headers` tetap berlaku: Workers Static Assets membacanya dari direktori aset, sehingga CSP, HSTS, dan aturan cache ikut terbawa tanpa perubahan.
+
+Divalidasi dengan wrangler asli sebelum dikirim: `wrangler deploy --dry-run` membaca 51 entri dari `./dist` tanpa galat (31 berkas + 20 varian rute `index.html` dari `auto-trailing-slash`).
+
+**URL produksi kini dari variabel lingkungan**
+
+Konsekuensi pindah platform: domain default bukan lagi `*.pages.dev`, melainkan `<worker>.<subdomain>.workers.dev` — dan subdomain akun itu tidak dapat diketahui dari repositori.
+
+Karena satu nilai ini merembes ke canonical, hreflang, sitemap, `robots.txt`, JSON-LD, `og:image`, dan `resume.json` — salah satu berarti salah semua — `site` di `astro.config.mjs` kini membaca `process.env.SITE_URL` lebih dulu, dengan literal sebagai cadangan build lokal. Pindah domain menjadi **satu setelan di dasbor, nol suntingan kode**.
+
+Diverifikasi: `SITE_URL=https://contoh.workers.dev pnpm build` mengubah canonical, sitemap, robots, dan og:image sekaligus.
+
+**Satu dependensi types-only ditambahkan:** `@types/node`. `astro check` mengetik-periksa `astro.config.mjs` (berkas itu ber-`// @ts-check`) dan menolak `process` tanpa tipenya. Alternatifnya adalah melepas `@ts-check` dari berkas konfigurasi — menukar keamanan tipe dengan penghematan yang tidak nyata. `dependencies` tetap **satu** (`astro`); tidak ada tambahan pada keluaran yang dikirim ke pengguna.
+
+**Penjaga CI baru:** memastikan `assets.directory` di `wrangler.jsonc` menunjuk direktori yang benar-benar ada dan berisi `index.html` setelah build. Salah ketik di sana lolos build dan baru muncul saat deploy — jauh dari tempat kesalahannya dibuat.
+
+**Konsekuensi:**
+- ✅ Deploy tidak lagi gagal karena konfigurasi yang hilang
+- ✅ Pindah domain = 1 variabel lingkungan, bukan suntingan kode
+- ✅ `_headers`, `404.html`, dan aturan trailing-slash tetap berlaku seperti di Pages
+- ⚠️ `name` di `wrangler.jsonc` harus dijaga sinkron dengan nama Worker di dasbor
+- ⚠️ Rollback kini lewat riwayat versi Worker, bukan tombol Rollback Pages — runbook §Prosedur Pemulihan perlu dibaca ulang saat Worker pertama benar-benar hidup
+
+---
+
 ## Template ADR Baru
 
 Salin blok ini setiap kali membuat keputusan arsitektural yang signifikan. Perubahan ruang lingkup **harus** melewati sini, bukan diputuskan diam-diam di tengah implementasi.

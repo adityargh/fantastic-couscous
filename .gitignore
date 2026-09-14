@@ -16,6 +16,9 @@ dist/
 # beberapa kali seumur situs — jauh lebih murah daripada memasang Chromium
 # di setiap build hanya untuk membangkitkan ulang berkas yang sama.
 
+# Artefak wrangler lokal
+.wrangler/
+
 # Artefak pengujian
 test-results/
 playwright-report/

@@ -1,0 +1,35 @@
+{
+  // Konfigurasi deploy Cloudflare Workers (Static Assets).
+  //
+  // Proyek ini awalnya direncanakan di Cloudflare Pages (ADR-002), tetapi
+  // Cloudflare kini mengarahkan repositori baru ke Workers dan menjalankan
+  // `npx wrangler versions upload` sebagai perintah deploy. Perintah itu
+  // menuntut berkas konfigurasi; tanpa berkas ini build sukses lalu deploy
+  // gagal dengan "Missing entry-point to Worker script or to assets directory".
+  // Lihat ADR-012.
+  //
+  // Tidak ada "main": situs ini 100% statis, jadi Worker-nya hanya menyajikan
+  // aset — tanpa satu baris pun kode server.
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  // HARUS sama persis dengan nama Worker di dasbor Cloudflare.
+  "name": "aditya-fauzi",
+
+  "compatibility_date": "2026-09-11",
+
+  "assets": {
+    "directory": "./dist",
+
+    // Menyajikan dist/about/index.html di /about dan mengalihkan /about/ ke
+    // /about — cocok dengan canonical yang dibangkitkan situs ini (tanpa
+    // garis miring akhir), sehingga tidak ada rantai redirect bagi perayap.
+    "html_handling": "auto-trailing-slash",
+
+    // URL tak dikenal menyajikan halaman 404 kustom, bukan 404 telanjang.
+    "not_found_handling": "404-page"
+  },
+
+  // Header keamanan dan aturan cache tetap dibaca dari public/_headers,
+  // yang ikut tersalin ke dist/ saat build.
+  "observability": { "enabled": true }
+}

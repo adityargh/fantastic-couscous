@@ -110,3 +110,17 @@ jobs:
             echo "::error::data pribadi terdeteksi di dist/"; exit 1
           fi
           echo "Nol nomor telepon / alamat rumah."
+
+      # Deploy Cloudflare menuntut wrangler.jsonc menunjuk direktori aset yang
+      # nyata. Salah ketik di sini lolos build dan baru gagal saat deploy —
+      # terlambat, dan jauh dari tempat kesalahannya dibuat.
+      - name: wrangler.jsonc menunjuk direktori keluaran yang ada
+        run: |
+          dir=$(node -e "
+            const s = require('fs').readFileSync('wrangler.jsonc','utf8').replace(/^\s*\/\/.*$/gm,'');
+            process.stdout.write(JSON.parse(s).assets.directory);
+          ")
+          echo "assets.directory = $dir"
+          test -d "$dir" || { echo "::error::$dir tidak ada setelah build"; exit 1; }
+          test -s "$dir/index.html" || { echo "::error::$dir/index.html tidak ada"; exit 1; }
+          echo "Direktori aset valid."
