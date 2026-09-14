@@ -41,7 +41,8 @@ jobs:
                    id/contact/index.html id/contact/success/index.html \
                    id/contact/error/index.html id/cv/index.html \
                    404.html sitemap.xml robots.txt resume.json \
-                   og/og-en.png og/og-id.png; do
+                   og/og-en.png og/og-id.png \
+                   cv/cv-en.pdf cv/cv-id.pdf cv/cv.manifest.json; do
             test -s "dist/$f" || { echo "::error::dist/$f tidak dihasilkan"; exit 1; }
           done
           echo "Semua halaman dan aset ada."
@@ -76,3 +77,34 @@ jobs:
           done
           test "$fail" -eq 0
           echo "Nol tautan internal rusak."
+
+      # PDF CV di-commit, bukan dibangkitkan saat build (ADR-011), sehingga ia
+      # bisa menyimpang diam-diam dari src/data.json. Manifest menyimpan sidik
+      # jari data saat PDF dibuat; kalau tidak cocok, isinya sudah basi.
+      - name: PDF CV tidak boleh basi terhadap src/data.json
+        run: |
+          want=$(sha256sum src/data.json | cut -d' ' -f1)
+          have=$(node -p "require('./public/cv/cv.manifest.json').dataHash")
+          if [ "$want" != "$have" ]; then
+            echo "::error::PDF CV basi. src/data.json berubah sejak PDF dibuat."
+            echo "  data.json : $want"
+            echo "  manifest  : $have"
+            echo "  Perbaiki : pnpm build && pnpm pdf, lalu commit public/cv/"
+            exit 1
+          fi
+          pages=$(node -p "Object.values(require('./public/cv/cv.manifest.json').pages).join(',')")
+          echo "PDF mutakhir — halaman: $pages"
+          node -e "
+            const p = require('./public/cv/cv.manifest.json').pages;
+            const bad = Object.entries(p).filter(([, n]) => n < 1 || n > 2);
+            if (bad.length) { console.error('::error::CV di luar batas 1-2 halaman: ' + JSON.stringify(p)); process.exit(1); }
+          "
+
+      # Data pribadi yang tidak pernah boleh masuk repo (rencana §6.4).
+      # Email SENGAJA dikecualikan: pemilik memublikasikannya (ADR-011).
+      - name: Nol nomor telepon atau alamat rumah di keluaran
+        run: |
+          if grep -rIEl '\+62[0-9]{9,}|\b(RT\.?[0-9]+ *[/ ] *RW\.?[0-9]+)' dist --include='*.html' --include='*.json'; then
+            echo "::error::data pribadi terdeteksi di dist/"; exit 1
+          fi
+          echo "Nol nomor telepon / alamat rumah."

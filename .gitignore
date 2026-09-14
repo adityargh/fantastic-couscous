@@ -8,8 +8,10 @@ dist/
 .output/
 
 # Aset hasil generate
-# PDF CV: dibangkitkan sesuai kebutuhan, jangan di-commit.
-public/cv/*.pdf
+# PDF CV: DI-COMMIT dengan sengaja (ADR-011), sama seperti OG image. Dua PDF
+# ~82 KB, dibangkitkan `pnpm pdf` dari Chromium sistem tanpa dependensi npm.
+# CI menolak PDF yang basi lewat public/cv/cv.manifest.json, sehingga isi PDF
+# tidak bisa menyimpang dari src/data.json tanpa ketahuan.
 # OG image: DI-COMMIT dengan sengaja (ADR-010). Dua PNG ±58 KB yang berubah
 # beberapa kali seumur situs — jauh lebih murah daripada memasang Chromium
 # di setiap build hanya untuk membangkitkan ulang berkas yang sama.

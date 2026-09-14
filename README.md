@@ -21,7 +21,7 @@ pnpm dev        # http://localhost:4321
 pnpm build      # astro check + build  ->  dist/
 pnpm preview    # pratinjau hasil build
 pnpm og         # opsional: bangkitkan ulang public/og/*.png (butuh Chromium sistem)
-pnpm pdf        # opsional: hasilkan dist/cv/*.pdf (butuh Playwright)
+pnpm pdf        # bangkitkan public/cv/*.pdf (butuh Chromium sistem, nol dep npm)
 ```
 
 ## Status konten
@@ -58,7 +58,7 @@ src/
     └── 404.astro
 scripts/
 ├── og.mjs               ← OG image via Chromium sistem, nol dependensi npm
-└── pdf.mjs              ← PDF CV via Playwright (opsional)
+└── pdf.mjs              ← CV PDF 1 halaman, juga nol dependensi npm
 ```
 
 Satu berkas `[...lang]/*.astro` melayani kedua bahasa. Rute studi kasus terpaksa eksplisit per
@@ -79,6 +79,9 @@ Build **gagal**, bukan sekadar memperingatkan, bila:
 | Seluruh 26 halaman & aset benar-benar ter-generate | `.github/workflows/ci.yml` |
 | Jumlah halaman EN = jumlah halaman ID | `.github/workflows/ci.yml` |
 | Nol placeholder, nol tautan internal rusak | `.github/workflows/ci.yml` |
+| PDF CV tidak basi terhadap `src/data.json` | `.github/workflows/ci.yml` + `cv.manifest.json` |
+| CV tetap 1–2 halaman | `.github/workflows/ci.yml` |
+| Nol nomor telepon / alamat rumah di keluaran | `.github/workflows/ci.yml` |
 
 ## Desain
 
@@ -91,7 +94,10 @@ dengan presisi, angka, dan standar tertulis, jadi antarmukanya terasa seperti pa
 - **Toggle tema 3 status**: ikut sistem → terang → gelap
 - Nol web font, nol gambar di jalur kritis, kisi hero murni CSS
 
-Nol overflow horizontal terverifikasi otomatis pada 8 halaman × 6 lebar (320–1024 px).
+**Terverifikasi otomatis, bukan diklaim:**
+- Nol overflow horizontal — 10 halaman × 6 lebar (320–1024 px)
+- Nol kegagalan WCAG AA — 8 halaman × 2 tema (kontras, urutan heading, nama aksesibel, target sentuh)
+- CV PDF 1 halaman A4, teks dapat diseleksi (ramah ATS)
 
 ## Deploy — Cloudflare Pages
 
@@ -107,6 +113,12 @@ dan `fantastic-couscous.pages.dev` sudah dimiliki pihak lain (diperiksa 14 Sep 2
 
 Ganti domain = **2 suntingan**: `site` di `astro.config.mjs` dan `FALLBACK_SITE` di `src/site.ts`.
 `robots.txt`, sitemap, canonical, hreflang, dan OG mengikuti otomatis.
+
+## Kontak
+
+Email publik (`contact.email`) adalah kanal utama — lihat ADR-011, yang membalik keputusan
+privasi awal atas permintaan pemilik. Mengosongkan field itu menghapusnya dari seluruh
+permukaan secara otomatis. Nomor telepon dan alamat rumah tetap **tidak punya field** di skema.
 
 ## Form kontak
 
@@ -128,6 +140,9 @@ Web3Forms. Halaman `/contact/success` dan `/contact/error` sudah ada dan ber-`no
 
 ## Belum dikerjakan (di luar lingkup saat ini)
 
-Playwright + axe-core + Lighthouse CI · Cloudflare Web Analytics (butuh pelonggaran CSP) ·
-`_redirects` · Dependabot & workflow higiene mingguan · tabel sebelum/sesudah pada studi kasus
+Lighthouse CI · Cloudflare Web Analytics (butuh pelonggaran CSP) · `_redirects` ·
+Dependabot & workflow higiene mingguan · tabel sebelum/sesudah pada studi kasus
 (menunggu angka dari pemilik).
+
+*Audit aksesibilitas dan overflow sudah berjalan sebagai harness tanpa dependensi; yang belum
+adalah menjadikannya langkah CI yang memblokir merge.*

@@ -28,6 +28,7 @@ const jsonLd = {
   url: new URL(hrefFor(lang, '/'), site).href,
   image: new URL(`/og/og-${lang}.png`, site).href,
   address: { '@type': 'PostalAddress', addressLocality: p.location },
+  ...(CONTACT.email ? { email: CONTACT.email } : {}),
   sameAs: CONTACT.social.map((s) => s.url),
   knowsAbout: p.disciplines,
   worksFor: career.map((c) => ({ '@type': 'Organization', name: c.company })),

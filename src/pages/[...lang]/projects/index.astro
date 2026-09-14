@@ -39,7 +39,7 @@ const arrow =
         {cases.map((c) => (
           <a class="card" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
             <p class="card-metric">{c.data.headline}</p>
-            <h3>{c.data.title}</h3>
+            <h2>{c.data.title}</h2>
             <p>{c.data.description}</p>
             <ul class="chips">{c.data.tags.map((tag) => <li class="chip">{tag}</li>)}</ul>
             <span class="card-go">{tr('proj.read')}<Fragment set:html={arrow} /></span>

@@ -1,62 +1,87 @@
 /**
- * Membuat berkas PDF dari halaman /cv yang sudah ter-build.
+ * Membangkitkan CV PDF dari halaman /cv yang sudah ter-build.
  *
- * OPSIONAL — sengaja TIDAK dijalankan pada setiap build (ADR-009). Halaman
- * /cv sendiri sudah dicetak rapi dari browser, jadi tidak ada risiko drift.
- * Skrip ini hanya diperlukan bila ingin berkas .pdf yang dihosting.
+ * NOL DEPENDENSI npm — memakai Chromium sistem lewat --print-to-pdf, pola yang
+ * sama dengan scripts/og.mjs. Playwright (±130 MB Chromium) tidak lagi dibutuhkan.
  *
  *   pnpm build && pnpm pdf
+ *   CHROME=/path/ke/chrome pnpm pdf
  *
- * Butuh Chromium: `pnpm dlx playwright install chromium` (sekali saja).
+ * Hasilnya ditulis ke public/cv/ (ikut di-commit, ADR-011) dan disalin ke
+ * dist/cv/ supaya build yang sedang berjalan langsung lengkap.
+ *
+ * Berkas manifest mencatat sidik jari src/data.json. CI memakainya untuk
+ * menolak PDF yang basi — mekanisme anti-drift pengganti pembangkitan
+ * saat build (ADR-005 -> ADR-009 #8 -> ADR-011).
  */
-import { createServer } from 'node:http';
-import { readFile, mkdir } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { readFile, mkdir, writeFile, copyFile, access } from 'node:fs/promises';
+import { existsSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { join, resolve } from 'node:path';
 
 const DIST = 'dist';
-const PORT = 4399;
-const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.json': 'application/json' };
+const LANGS = [
+  ['en', 'cv/index.html'],
+  ['id', 'id/cv/index.html'],
+];
 
-let chromium;
-try {
-  ({ chromium } = await import('playwright'));
-} catch {
-  console.error('Playwright belum terpasang. Jalankan: pnpm add -D playwright && pnpm dlx playwright install chromium');
+const CANDIDATES = [
+  process.env.CHROME,
+  '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser',
+  '/usr/bin/google-chrome',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+].filter(Boolean);
+
+const chrome = CANDIDATES.find((p) => existsSync(p));
+if (!chrome) {
+  console.error('Chromium tidak ditemukan. Setel CHROME=/path/ke/chrome lalu ulangi.');
   process.exit(1);
 }
 
-const server = createServer(async (req, res) => {
-  try {
-    let p = normalize(decodeURIComponent((req.url ?? '/').split('?')[0]));
-    if (p.endsWith('/')) p += 'index.html';
-    if (!extname(p)) p += '/index.html';
-    const buf = await readFile(join(DIST, p));
-    res.writeHead(200, { 'Content-Type': TYPES[extname(p)] ?? 'application/octet-stream' });
-    res.end(buf);
-  } catch {
-    res.writeHead(404).end('not found');
-  }
-});
-await new Promise((r) => server.listen(PORT, r));
-
-await mkdir('dist/cv', { recursive: true });
-const browser = await chromium.launch();
-
-for (const [lang, path] of [['en', '/cv'], ['id', '/id/cv']]) {
-  const page = await browser.newPage();
-  await page.goto(`http://localhost:${PORT}${path}`, { waitUntil: 'load' });
-  await page.emulateMedia({ media: 'print' });
-  const out = `dist/cv/cv-${lang}.pdf`;
-  await page.pdf({
-    path: out,
-    format: 'A4',
-    printBackground: false,
-    tagged: true, // PDF ter-tag: aksesibel dan lebih mudah diurai ATS
-    margin: { top: '14mm', bottom: '14mm', left: '15mm', right: '15mm' },
-  });
-  console.log('dibuat:', out);
-  await page.close();
+try {
+  await access(join(DIST, 'cv', 'index.html'));
+} catch {
+  console.error('dist/cv/index.html tidak ada. Jalankan `pnpm build` lebih dulu.');
+  process.exit(1);
 }
 
-await browser.close();
-server.close();
+await mkdir('public/cv', { recursive: true });
+const pages = {};
+
+for (const [lang, page] of LANGS) {
+  const out = `public/cv/cv-${lang}.pdf`;
+  execFileSync(chrome, [
+    '--headless', '--no-sandbox', '--disable-gpu',
+    '--no-pdf-header-footer',            // tanpa URL & nomor halaman bawaan browser
+    '--virtual-time-budget=5000',
+    `--print-to-pdf=${out}`,
+    `file://${resolve(DIST, page)}`,
+  ], { stdio: ['ignore', 'ignore', 'ignore'] });
+
+  // Hitung halaman langsung dari struktur PDF — satu-satunya ukuran yang jujur
+  const buf = readFileSync(out);
+  const count = Number(buf.toString('latin1').match(/\/Count\s+(\d+)/)?.[1] ?? 0);
+  pages[lang] = count;
+  console.log(`dibuat: ${out} — ${count} halaman, ${(buf.length / 1024).toFixed(0)} KB`);
+
+  await mkdir(join(DIST, 'cv'), { recursive: true });
+  await copyFile(out, join(DIST, 'cv', `cv-${lang}.pdf`));
+}
+
+
+const dataHash = createHash('sha256').update(await readFile('src/data.json')).digest('hex');
+await writeFile(
+  'public/cv/cv.manifest.json',
+  JSON.stringify({ dataHash, pages, generatedAt: new Date().toISOString() }, null, 2) + '\n',
+);
+await copyFile('public/cv/cv.manifest.json', join(DIST, 'cv', 'cv.manifest.json'));
+console.log('manifest ditulis — CI akan menolak PDF yang basi terhadap src/data.json');
+
+const tooLong = Object.entries(pages).filter(([, n]) => n > 2);
+if (tooLong.length) {
+  console.error(`\nPERINGATAN: CV lebih dari 2 halaman: ${tooLong.map(([l, n]) => `${l}=${n}`).join(', ')}`);
+  process.exit(1);
+}

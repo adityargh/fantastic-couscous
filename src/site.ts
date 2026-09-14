@@ -119,6 +119,12 @@ const dataSchema = z.object({
   _verify: z.array(z.string()).optional(),
   contact: z.object({
     web3formsKey: z.string(),
+    /**
+     * Email publik. Rencana awal (docs/01 §H) menyembunyikannya dan hanya
+     * menyediakan form; pemilik membalikkan keputusan itu — lihat ADR-011.
+     * Kosongkan string ini untuk menyembunyikannya lagi dari seluruh situs.
+     */
+    email: z.union([z.string().email(), z.literal('')]).default(''),
     social: z.array(z.object({ label: z.string().min(1), url: z.string().url() })),
   }),
   en: profileSchema,
@@ -230,6 +236,7 @@ type Key =
   | 'form.name' | 'form.email' | 'form.message' | 'form.send' | 'form.required'
   | 'form.help' | 'form.unconfigured' | 'form.counter' | 'form.expect' | 'form.alt'
   | 'form.okTitle' | 'form.okBody' | 'form.errTitle' | 'form.errBody'
+  | 'form.direct' | 'form.directHint' | 'form.or' | 'cv.download'
   | 'ui.present' | 'ui.skip' | 'ui.theme' | 'ui.themeAuto' | 'ui.themeLight'
   | 'ui.themeDark' | 'ui.switchLang' | 'ui.draft' | 'ui.current'
   | 'ui.notFound' | 'ui.notFoundBody' | 'ui.home' | 'ui.level' | 'ui.roleCount'
@@ -269,6 +276,9 @@ export const UI: Record<Lang, Record<Key, string>> = {
     'form.okBody': 'Thank you — it landed in my inbox. I usually reply within one working day.',
     'form.errTitle': 'That did not send',
     'form.errBody': 'Something went wrong on the way to my inbox. Try again, or reach me through the links below.',
+    'form.direct': 'Email me directly', 'form.or': 'or',
+    'form.directHint': 'Straight to my inbox. I usually reply within one working day.',
+    'cv.download': 'Download PDF',
     'ui.present': 'Present', 'ui.skip': 'Skip to content',
     'ui.theme': 'Colour theme', 'ui.themeAuto': 'Theme: follow system',
     'ui.themeLight': 'Theme: light', 'ui.themeDark': 'Theme: dark',
@@ -313,6 +323,9 @@ export const UI: Record<Lang, Record<Key, string>> = {
     'form.okBody': 'Terima kasih — pesan Anda sudah masuk. Saya biasanya membalas dalam 1x24 jam kerja.',
     'form.errTitle': 'Pesan gagal terkirim',
     'form.errBody': 'Ada yang salah di perjalanan menuju inbox saya. Coba lagi, atau hubungi lewat tautan di bawah.',
+    'form.direct': 'Email saya langsung', 'form.or': 'atau',
+    'form.directHint': 'Langsung ke inbox saya. Biasanya saya balas dalam 1x24 jam kerja.',
+    'cv.download': 'Unduh PDF',
     'ui.present': 'Sekarang', 'ui.skip': 'Lompat ke konten',
     'ui.theme': 'Tema warna', 'ui.themeAuto': 'Tema: ikut sistem',
     'ui.themeLight': 'Tema: terang', 'ui.themeDark': 'Tema: gelap',

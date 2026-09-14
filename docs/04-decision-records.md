@@ -330,6 +330,76 @@ Sebelumnya tersebar di 6 tempat. Kini: `site` di `astro.config.mjs` sebagai sumb
 
 ---
 
+## ADR-011 — Email publik, CV satu halaman, dan pengerasan aksesibilitas
+
+**Status:** Diterima · 14 Sep 2026 · Membalik sebagian docs/01 §H · Melengkapi ADR-005/009/010
+
+### 1. Email ditampilkan publik — membalik keputusan awal
+
+Rencana awal (`docs/01-content-brief.md` §H, rencana utama §6.4) menetapkan email **tidak** tampil publik; kontak hanya lewat form. Pemilik membalik keputusan itu secara eksplisit.
+
+| | |
+| :--- | :--- |
+| **Alasan** | Form kontak bergantung pada penyedia pihak ketiga yang kuncinya belum disetel. Email langsung bekerja hari ini, tanpa perantara, tanpa kuota, dan tanpa titik gagal |
+| **Biaya yang diterima** | Alamat dalam `mailto:` terbuka dapat dipanen bot. Filter spam modern menanggung sebagian besar bebannya; ini pertukaran sadar, bukan kelalaian |
+| **Ruang lingkup** | Email saja. Nomor telepon, alamat rumah, dan tanggal lahir tetap TIDAK punya field di skema — `.strict()` akan menggagalkan build bila ada yang mencoba menambahkannya |
+| **Cara membalik** | Kosongkan `contact.email` di `src/data.json`. Seluruh permukaan (halaman kontak, footer, CV, JSON-LD, resume.json) menghilangkannya secara otomatis |
+
+CI kini punya penjaga eksplisit: nol nomor telepon dan nol pola alamat rumah di `dist/`, dengan email sengaja dikecualikan.
+
+### 2. CV PDF: 3 halaman → 1 halaman
+
+Versi sebelumnya mewarisi ritme layar ke kertas — leading 1,65; gutter tanggal 150 px; jarak antar-seksi 48 px; lebar baca dibatasi 66ch sehingga separuh kanan kertas kosong. Hasilnya 3 halaman untuk karier 4 tahun.
+
+Blok `@media print` ditulis ulang sepenuhnya: basis 9,4pt/1,34, gutter tanggal 92pt, jarak seksi 10pt, dan seluruh batas lebar baca dilepas. Di kertas, **kepadatan adalah keterbacaan** — recruiter memindai, bukan membaca. Aturan `break-inside: avoid` menjaga tidak ada peran terpotong antar-halaman bila konten bertambah.
+
+### 3. Pipeline PDF: nol dependensi npm, hasil di-commit, anti-drift lewat manifest
+
+| Keputusan | Menggantikan | Alasan |
+| :--- | :--- | :--- |
+| Chromium sistem via `--print-to-pdf` | Playwright (ADR-005) | Menghapus dependensi ±130 MB. Pola yang sama dengan `scripts/og.mjs` |
+| Render dari `file://`, bukan server HTTP lokal | server sementara | CSS sudah ter-inline, jadi hasilnya identik. Server lokal membuat Chrome menggantung >60 detik karena ia merutekan `localhost` lewat `http_proxy` dari environment; `--no-proxy-server` kini juga dipasang |
+| PDF di-commit ke `public/cv/` | `.gitignore` | Dua berkas ±82 KB yang berubah beberapa kali seumur situs. Cloudflare Pages tidak menyediakan Chromium saat build, jadi membangkitkannya di sana bukan pilihan |
+| `cv.manifest.json` menyimpan sidik jari `src/data.json` | — | Mengembalikan jaminan anti-drift yang hilang saat PDF berhenti dibangkitkan tiap build. CI menolak PDF yang isinya tidak lagi cocok dengan sumber data, dan menolak CV di luar batas 1–2 halaman |
+
+Catatan: manifest sengaja hanya menyidik `src/data.json`. Perubahan tata letak murni (CSS) tidak memaksa regenerasi — yang berbahaya adalah PDF yang **isinya** berbeda dari web, bukan yang jaraknya bergeser beberapa poin.
+
+### 4. Aksesibilitas: audit otomatis menemukan 124 kegagalan kontras
+
+Audit ditulis sendiri (nol dependensi) dan dijalankan pada 8 halaman × 2 tema, memeriksa rasio kontras terhitung, urutan heading, nama aksesibel, target sentuh, dan atribut `alt`.
+
+**Temuan:** 124 kegagalan WCAG AA, **seluruhnya di tema terang**, dan semuanya berpangkal pada satu token: `--ink-3: #6b7c93` menghasilkan 3,93:1 di atas `--ground` dan 4,26:1 di atas `--surface` — keduanya di bawah ambang 4,5:1. Token itu dipakai pada hampir semua teks sekunder: eyebrow, tanggal, lokasi peran, catatan domain, konteks kartu angka, dan heading footer.
+
+| Perbaikan | Nilai | Hasil |
+| :--- | :--- | :--- |
+| `--ink-3` | `#6b7c93` → `#5c6a7e` | 4,56:1 pada latar terang tergelap; 5,50:1 pada putih |
+| `--warn` | `#a16207` → `#9d5f07` | 4,63:1 pada `--warn-tint` (sebelumnya 4,42:1) |
+| Heading footer | `h3` → `h2` | Menghapus lompatan h1→h3 di halaman pendek |
+| Judul kartu di halaman daftar | `h3` → `h2` | Halaman itu tidak punya `h2` induk |
+
+Audit ulang: **nol temuan.**
+
+**Dua jebakan alat ukur — dicatat agar tidak terulang:**
+
+1. **`color-mix()` dikomputasi sebagai `color(srgb 0.95 …)`, skala 0–1, bukan 0–255.** Parser yang membacanya sebagai 0–255 menganggap setiap latar di dalam header sticky hitam pekat, dan melahirkan puluhan kegagalan palsu. Alat ukur yang salah lebih berbahaya daripada tidak mengukur: ia mengarahkan perbaikan ke tempat yang benar-benar tidak bermasalah.
+2. **Mengubah `data-theme` setelah halaman dimuat tidak memicu style recalc di Chrome headless bervirtual-time.** Sebagian nilai terbaca tema terang, sebagian tema gelap, dan hasilnya mustahil (tombol primer dilaporkan 1,17:1). Tema harus ditanam di HTML **sebelum** dimuat — sama seperti harness screenshot.
+
+### 5. Perbaikan interaksi lain
+
+- Halaman kontak: email jadi kanal utama dengan tombol **salin alamat**, yang hanya muncul bila `navigator.clipboard` benar-benar ada — tombol mati lebih buruk daripada tidak ada tombol. Status salin diumumkan lewat `role="status"`
+- Tombol **Unduh PDF** di halaman CV bekerja tanpa JavaScript; tombol **Simpan sebagai PDF** (yang memanggil `window.print()`) baru muncul bila JS hidup
+- Judul form disederhanakan; kartu email dan kartu form berdampingan pada layar lebar, menumpuk di ponsel
+
+**Konsekuensi:**
+- ✅ CV 1 halaman A4, teks nyata dan dapat diseleksi (ramah ATS), EN dan ID
+- ✅ Nol kegagalan WCAG AA pada 8 halaman × 2 tema
+- ✅ Nol overflow horizontal pada 10 halaman × 6 lebar (320–1024 px)
+- ✅ Nol dependensi npm bertambah — `astro` tetap satu-satunya dependensi runtime
+- ⚠️ Email publik dapat dipanen bot; pertukaran yang diterima secara sadar
+- ⚠️ PDF harus dibangkitkan ulang (`pnpm build && pnpm pdf`) setiap kali `src/data.json` berubah; CI akan menolak bila lupa
+
+---
+
 ## Template ADR Baru
 
 Salin blok ini setiap kali membuat keputusan arsitektural yang signifikan. Perubahan ruang lingkup **harus** melewati sini, bukan diputuskan diam-diam di tengah implementasi.

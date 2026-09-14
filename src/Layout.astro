@@ -151,18 +151,21 @@ const nav = [
       <div class="wrap">
         <div class="foot-grid">
           <div>
-            <h3>{p.name}</h3>
+            <h2>{p.name}</h2>
             <p class="muted" style="max-width:38ch">{p.positioning}</p>
           </div>
           <div>
-            <h3>{tr('nav.label')}</h3>
+            <h2>{tr('nav.label')}</h2>
             <ul class="foot-links">
               {nav.map((item) => <li><a href={hrefFor(lang, item.to)}>{tr(item.key)}</a></li>)}
             </ul>
           </div>
           <div>
-            <h3>{tr('cv.contact')}</h3>
+            <h2>{tr('cv.contact')}</h2>
             <ul class="foot-links">
+              {CONTACT.email && (
+                <li><a href={`mailto:${CONTACT.email}`} rel="me">{CONTACT.email}</a></li>
+              )}
               {CONTACT.social.map((s) => (
                 <li><a href={s.url} rel="me noopener">{s.label}</a></li>
               ))}

@@ -12,6 +12,8 @@ const { lang } = Astro.props;
 const p = profileOf(lang);
 const tr = t(lang);
 const career = tenures(p.experience);
+const email = CONTACT.email.trim();
+const short = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 ---
 <Layout
   lang={lang}
@@ -23,29 +25,31 @@ const career = tenures(p.experience);
     <section class="section cv">
       <p class="notice no-print" style="margin-bottom:var(--s4)">{tr('cv.hint')}</p>
       <p class="no-print btn-row" style="margin-bottom:var(--s7)">
-        <button class="btn btn-primary" type="button" id="print-cv">{tr('cv.print')}</button>
+        <a class="btn btn-primary" href={`/cv/cv-${lang}.pdf`} download>{tr('cv.download')}</a>
+        <button class="btn btn-ghost" type="button" id="print-cv" hidden>{tr('cv.print')}</button>
       </p>
 
-      <header class="stack stack-sm">
+      <header>
         <h1>{p.name}</h1>
-        <p class="lede" style="font-weight:600">{p.headline}</p>
+        <p class="cv-title">{p.headline}</p>
         <p class="cv-head">
           <span>{p.location}</span>
-          {CONTACT.social.map((s) => <a href={s.url} rel="noopener">{s.url.replace(/^https?:\/\/(www\.)?/, '')}</a>)}
+          {email && <a href={`mailto:${email}`}>{email}</a>}
+          {CONTACT.social.map((s) => <a href={s.url} rel="noopener">{short(s.url)}</a>)}
         </p>
       </header>
 
       <section>
         <h2>{tr('cv.profile')}</h2>
-        <p style="max-width:var(--measure)">{p.positioning}</p>
-        <p class="dim" style="margin-top:var(--s2)">{p.disciplines.join(' · ')}</p>
+        <p class="cv-profile">{p.positioning}</p>
+        <p class="cv-disciplines">{p.disciplines.join(' · ')}</p>
       </section>
 
       <section>
         <h2>{tr('sec.experience')}</h2>
         {career.map((c) => (
-          <div style="margin-bottom:var(--s5)">
-            <p class="eyebrow" style="margin-bottom:var(--s3)">
+          <div class="cv-tenure">
+            <p class="cv-company">
               {c.company}{c.industry ? ` · ${c.industry}` : ''} · {durationLabel(c.months, lang)}
             </p>
             {c.roles.map((r) => (
@@ -56,7 +60,7 @@ const career = tenures(p.experience);
                 </p>
                 <div>
                   <h3>{r.title}</h3>
-                  <p class="dim" style="font-size:0.9rem">{r.location}{r.scope ? ` · ${r.scope}` : ''}</p>
+                  <p class="where">{r.location}{r.scope ? ` · ${r.scope}` : ''}</p>
                   <ul>{r.achievements.map((a) => <li>{a}</li>)}</ul>
                 </div>
               </div>
@@ -88,6 +92,13 @@ const career = tenures(p.experience);
   </div>
 
   <script is:inline>
-    document.getElementById('print-cv')?.addEventListener('click', function () { window.print(); });
+    // Tombol cetak hanya muncul bila JS hidup — tombol mati lebih buruk
+    // daripada tidak ada tombol. Unduh PDF tetap bekerja tanpa JS.
+    (function () {
+      var b = document.getElementById('print-cv');
+      if (!b) return;
+      b.hidden = false;
+      b.addEventListener('click', function () { window.print(); });
+    })();
   </script>
 </Layout>

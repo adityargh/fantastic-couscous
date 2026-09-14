@@ -6,11 +6,12 @@
     "Bullet pencapaian menggambarkan cakupan jabatan dan durasi yang terverifikasi. Ganti dengan hasil nyata Anda bila angkanya boleh publik.",
     "Tools per peran diisi konservatif. Tambahkan SQL / Power BI / nama WMS yang sebenarnya bila benar.",
     "Studi kasus memuat daftar 'yang saya ukur'. Tabel sebelum/sesudah sengaja kosong sampai Anda memberi angka yang boleh dipublikasikan.",
-    "Tetapkan contact.web3formsKey agar form kontak aktif.",
+    "Tetapkan contact.web3formsKey agar form kontak aktif (email langsung sudah tersedia sebagai kanal utama).",
     "Setelah semua di atas diperiksa: set draft:false untuk membuka pengindeksan."
   ],
   "contact": {
     "web3formsKey": "",
+    "email": "adithyun.marv@gmail.com",
     "social": [
       { "label": "LinkedIn", "url": "https://www.linkedin.com/in/adityargh" },
       { "label": "GitHub", "url": "https://github.com/adityargh" }

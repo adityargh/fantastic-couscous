@@ -14,6 +14,7 @@ export const GET: APIRoute = ({ site }) => {
       name: p.name,
       label: p.headline,
       summary: p.positioning,
+      ...(CONTACT.email ? { email: CONTACT.email } : {}),
       url: (site ?? FALLBACK_SITE).href,
       location: { city: p.location },
       keywords: p.disciplines,
