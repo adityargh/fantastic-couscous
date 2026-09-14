@@ -15,8 +15,10 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+      # Versi pnpm TIDAK disetel di sini. `packageManager` di package.json adalah
+      # satu-satunya sumber kebenaran; menyetel keduanya membuat action-setup
+      # gagal dengan "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@v4
-        with: { version: 10 }
       - uses: actions/setup-node@v4
         with: { node-version-file: .nvmrc, cache: pnpm }
 
