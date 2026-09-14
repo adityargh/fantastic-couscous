@@ -26,11 +26,53 @@ jobs:
       # data.json atau frontmatter yang melanggar aturan akan menggagalkan build.
       - run: pnpm build
 
-      - name: Pastikan halaman kunci benar-benar ter-generate
+      - name: Pastikan setiap halaman benar-benar ter-generate
         run: |
-          for f in index.html id/index.html about/index.html id/about/index.html \
-                   projects/index.html cv/index.html id/cv/index.html \
-                   contact/index.html 404.html sitemap.xml resume.json; do
+          for f in index.html about/index.html projects/index.html \
+                   projects/inventory-accuracy/index.html \
+                   projects/quality-system/index.html \
+                   projects/ops-analytics/index.html \
+                   contact/index.html contact/success/index.html contact/error/index.html \
+                   cv/index.html \
+                   id/index.html id/about/index.html id/projects/index.html \
+                   id/projects/inventory-accuracy/index.html \
+                   id/projects/quality-system/index.html \
+                   id/projects/ops-analytics/index.html \
+                   id/contact/index.html id/contact/success/index.html \
+                   id/contact/error/index.html id/cv/index.html \
+                   404.html sitemap.xml robots.txt resume.json \
+                   og/og-en.png og/og-id.png; do
             test -s "dist/$f" || { echo "::error::dist/$f tidak dihasilkan"; exit 1; }
           done
-          echo "Semua halaman kunci ada."
+          echo "Semua halaman dan aset ada."
+
+      # Penjaga struktural untuk jebakan ADR-009 #1: rute yang salah bentuk
+      # membuang SELURUH halaman bahasa Indonesia tanpa galat apa pun. Daftar
+      # eksplisit di atas hanya menangkap halaman yang sudah diketahui — cek
+      # paritas ini menangkap halaman baru yang lupa dibuatkan pasangan ID-nya.
+      - name: Paritas jumlah halaman EN vs ID
+        run: |
+          en=$(find dist -name index.html -not -path 'dist/id/*' | wc -l)
+          id=$(find dist/id -name index.html | wc -l)
+          echo "EN=$en  ID=$id"
+          test "$en" -eq "$id" || { echo "::error::halaman EN ($en) dan ID ($id) tidak seimbang"; exit 1; }
+
+      - name: Tidak ada placeholder yang lolos ke produksi
+        run: |
+          if grep -rlE 'PLACEHOLDER|lorem ipsum|TODO:' dist --include='*.html'; then
+            echo "::error::masih ada teks placeholder di dist/"; exit 1
+          fi
+          echo "Nol placeholder."
+
+      - name: Tautan internal tidak ada yang rusak
+        run: |
+          fail=0
+          for f in $(find dist -name '*.html'); do
+            for href in $(grep -oE 'href="/[^"#?]*"' "$f" | sed 's/href="//;s/"//'); do
+              t="dist${href%/}"
+              [ -f "$t" ] || [ -f "$t/index.html" ] || [ -f "dist$href" ] || {
+                echo "::error file=$f::tautan rusak $href"; fail=1; }
+            done
+          done
+          test "$fail" -eq 0
+          echo "Nol tautan internal rusak."

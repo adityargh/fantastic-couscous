@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { CONTACT, profileOf } from '../site';
+import { CONTACT, FALLBACK_SITE, profileOf } from '../site';
 
 /**
  * Ekspor JSON Resume (jsonresume.org/schema) dari sumber data yang sama.
@@ -14,8 +14,9 @@ export const GET: APIRoute = ({ site }) => {
       name: p.name,
       label: p.headline,
       summary: p.positioning,
-      url: site?.href,
+      url: (site ?? FALLBACK_SITE).href,
       location: { city: p.location },
+      keywords: p.disciplines,
       profiles: CONTACT.social.map((s) => ({ network: s.label, url: s.url })),
     },
     work: p.experience.map((r) => ({
@@ -33,7 +34,10 @@ export const GET: APIRoute = ({ site }) => {
     certificates: p.education
       .filter((e) => e.kind === 'certification')
       .map((e) => ({ name: e.name, issuer: e.institution, date: e.year, url: e.url || undefined })),
-    skills: p.skills.map((g) => ({ name: g.domain, keywords: g.items.map((i) => i.name) })),
+    skills: p.skills.map((g) => ({
+      name: g.domain,
+      keywords: g.items.map((i) => i.name),
+    })),
   };
 
   return new Response(JSON.stringify(body, null, 2), {

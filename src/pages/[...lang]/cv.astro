@@ -1,6 +1,9 @@
 ---
 import Layout from '../../Layout.astro';
-import { CONTACT, langPaths, profileOf, periodLabel, t, type Lang } from '../../site';
+import {
+  CONTACT, langPaths, profileOf, periodLabel, tenures, durationLabel,
+  monthsBetween, t, type Lang,
+} from '../../site';
 
 export const getStaticPaths = langPaths;
 type Props = { lang: Lang };
@@ -8,49 +11,63 @@ type Props = { lang: Lang };
 const { lang } = Astro.props;
 const p = profileOf(lang);
 const tr = t(lang);
+const career = tenures(p.experience);
 ---
 <Layout
   lang={lang}
   path="/cv"
   title={`${tr('cv.title')} — ${p.name}`}
-  description={`${tr('cv.title')} ${p.name} — ${p.headline}.`}
+  description={`${tr('cv.title')} ${p.name} — ${p.headline}. ${p.positioning}`}
 >
   <div class="wrap">
-    <section class="band cv">
-      <p class="notice no-print" style="margin-bottom:var(--lg)">
-        {tr('cv.hint')}
-      </p>
-      <p class="no-print" style="margin-bottom:var(--xl)">
+    <section class="section cv">
+      <p class="notice no-print" style="margin-bottom:var(--s4)">{tr('cv.hint')}</p>
+      <p class="no-print btn-row" style="margin-bottom:var(--s7)">
         <button class="btn btn-primary" type="button" id="print-cv">{tr('cv.print')}</button>
       </p>
 
       <header class="stack stack-sm">
         <h1>{p.name}</h1>
-        <p class="role">{p.headline}</p>
-        <p class="cv-head muted">
+        <p class="lede" style="font-weight:600">{p.headline}</p>
+        <p class="cv-head">
           <span>{p.location}</span>
-          {CONTACT.social.map((s) => <a href={s.url} rel="noopener">{s.label}</a>)}
+          {CONTACT.social.map((s) => <a href={s.url} rel="noopener">{s.url.replace(/^https?:\/\/(www\.)?/, '')}</a>)}
         </p>
-        <p class="muted">{p.positioning}</p>
       </header>
 
       <section>
+        <h2>{tr('cv.profile')}</h2>
+        <p style="max-width:var(--measure)">{p.positioning}</p>
+        <p class="dim" style="margin-top:var(--s2)">{p.disciplines.join(' · ')}</p>
+      </section>
+
+      <section>
         <h2>{tr('sec.experience')}</h2>
-        <div class="stack stack-md">
-          {p.experience.map((r) => (
-            <article class="role-item">
-              <p class="role-when">{periodLabel(r.start, r.end, lang)}</p>
-              <h3>{r.title} — {r.company}</h3>
-              <p class="role-where">{r.location}{r.scope ? ` · ${r.scope}` : ''}</p>
-              <ul>{r.achievements.map((a) => <li>{a}</li>)}</ul>
-            </article>
-          ))}
-        </div>
+        {career.map((c) => (
+          <div style="margin-bottom:var(--s5)">
+            <p class="eyebrow" style="margin-bottom:var(--s3)">
+              {c.company}{c.industry ? ` · ${c.industry}` : ''} · {durationLabel(c.months, lang)}
+            </p>
+            {c.roles.map((r) => (
+              <div class="cv-role">
+                <p class="when">
+                  {periodLabel(r.start, r.end, lang)}<br />
+                  <span class="dim">{durationLabel(monthsBetween(r.start, r.end), lang)}</span>
+                </p>
+                <div>
+                  <h3>{r.title}</h3>
+                  <p class="dim" style="font-size:0.9rem">{r.location}{r.scope ? ` · ${r.scope}` : ''}</p>
+                  <ul>{r.achievements.map((a) => <li>{a}</li>)}</ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
       </section>
 
       <section>
         <h2>{tr('sec.skills')}</h2>
-        <ul style="list-style:none;padding:0" class="stack stack-sm">
+        <ul class="cv-list">
           {p.skills.map((g) => (
             <li><strong>{g.domain}:</strong> {g.items.map((i) => i.name).join(', ')}</li>
           ))}
@@ -60,9 +77,9 @@ const tr = t(lang);
       {p.education.length > 0 && (
         <section>
           <h2>{tr('sec.education')}</h2>
-          <ul style="list-style:none;padding:0" class="stack stack-sm">
+          <ul class="cv-list">
             {p.education.map((e) => (
-              <li>{e.name} — {e.institution}, {e.year}</li>
+              <li><strong>{e.name}</strong> — {e.institution} <span class="dim tnum">({e.period ?? e.year})</span></li>
             ))}
           </ul>
         </section>

@@ -11,28 +11,38 @@ const p = profileOf(lang);
 const tr = t(lang);
 const cases = (await getCollection('projects', (e) => e.data.lang === lang))
   .sort((a, b) => a.data.order - b.data.order);
+
+const arrow =
+  '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M2 7h9M7.5 3.5 11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <Layout
   lang={lang}
   path="/projects"
   title={`${tr('nav.projects')} — ${p.name}`}
   description={lang === 'id'
-    ? `Studi kasus operasional ${p.name}: masalah, pendekatan, dan hasil yang terukur.`
-    : `Operations case studies by ${p.name}: the problem, the approach, and the measured result.`}
+    ? `Studi kasus operasional ${p.name}: masalah, pendekatan, indikator yang diukur, dan apa yang dipelajari.`
+    : `Operations case studies by ${p.name}: the problem, the approach, the indicators measured, and what was learned.`}
 >
   <div class="wrap">
-    <section class="band">
-      <div class="band-head">
-        <p class="eyebrow">{tr('nav.projects')}</p>
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">{tr('nav.projects')}</p>
         <h1>{tr('proj.all')}</h1>
+        <p class="eyebrow tnum">{cases.length} {tr('proj.count')}</p>
       </div>
+      <p class="lede" style="margin-bottom:var(--s6)">
+        {lang === 'id'
+          ? 'Tiga sistem operasional yang saya bangun di ASTRO — ditulis sebagai keputusan dan konsekuensinya, bukan sebagai daftar tugas.'
+          : 'Three operating systems I built at ASTRO — written as decisions and their consequences, not as a list of duties.'}
+      </p>
       <div class="cards">
         {cases.map((c) => (
           <a class="card" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
-            <p class="result">{c.data.headline}</p>
+            <p class="card-metric">{c.data.headline}</p>
             <h3>{c.data.title}</h3>
             <p>{c.data.description}</p>
-            <p class="tags">{c.data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>
+            <ul class="chips">{c.data.tags.map((tag) => <li class="chip">{tag}</li>)}</ul>
+            <span class="card-go">{tr('proj.read')}<Fragment set:html={arrow} /></span>
           </a>
         ))}
       </div>

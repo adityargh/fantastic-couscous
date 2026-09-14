@@ -1,0 +1,39 @@
+---
+/**
+ * Badan halaman hasil pengiriman form — dipakai dua rute (sukses & galat),
+ * mengikuti pola yang sama dengan CaseStudy.astro agar tidak ada duplikasi.
+ */
+import Layout from './Layout.astro';
+import { CONTACT, hrefFor, profileOf, t, type Lang } from './site';
+
+interface Props { lang: Lang; ok: boolean }
+const { lang, ok } = Astro.props;
+const p = profileOf(lang);
+const tr = t(lang);
+const title = ok ? tr('form.okTitle') : tr('form.errTitle');
+const body = ok ? tr('form.okBody') : tr('form.errBody');
+---
+<Layout
+  lang={lang}
+  path={ok ? '/contact/success' : '/contact/error'}
+  title={`${title} — ${p.name}`}
+  description={body}
+  noindex
+>
+  <div class="wrap">
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">{tr('nav.contact')}</p>
+        <h1>{title}</h1>
+      </div>
+      <p class={ok ? 'notice notice-ok' : 'notice notice-warn'} style="max-width:640px">{body}</p>
+      <p class="btn-row" style="margin-top:var(--s5)">
+        <a class="btn btn-primary" href={hrefFor(lang, '/')}>{tr('ui.home')}</a>
+        {!ok && <a class="btn btn-ghost" href={hrefFor(lang, '/contact')}>{tr('nav.contact')}</a>}
+      </p>
+      <ul class="linklist" style="margin-top:var(--s6)">
+        {CONTACT.social.map((s) => <li><a href={s.url} rel="me noopener">{s.label}</a></li>)}
+      </ul>
+    </section>
+  </div>
+</Layout>

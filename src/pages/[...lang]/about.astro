@@ -1,6 +1,6 @@
 ---
 import Layout from '../../Layout.astro';
-import { langPaths, profileOf, t, type Lang } from '../../site';
+import { langPaths, profileOf, hrefFor, t, type Lang } from '../../site';
 
 export const getStaticPaths = langPaths;
 type Props = { lang: Lang };
@@ -16,19 +16,21 @@ const tr = t(lang);
   description={p.positioning}
 >
   <div class="wrap">
-    <section class="band">
-      <div class="band-head">
-        <p class="eyebrow">{tr('sec.about')}</p>
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">{tr('sec.about')}</p>
         <h1>{p.name}</h1>
       </div>
+      <p class="lede" style="margin-bottom:var(--s6)">{p.positioning}</p>
       <div class="prose">
         {p.about.map((para) => <p>{para}</p>)}
       </div>
     </section>
 
     {p.education.length > 0 && (
-      <section class="band" aria-labelledby="edu">
-        <div class="band-head">
+      <section class="section" aria-labelledby="edu">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-n">{lang === 'id' ? 'Latar' : 'Background'}</p>
           <h2 id="edu">{tr('sec.education')}</h2>
         </div>
         <div class="tablewrap">
@@ -36,9 +38,9 @@ const tr = t(lang);
             <tbody>
               {p.education.map((e) => (
                 <tr>
-                  <td>{e.url ? <a href={e.url} rel="noopener">{e.name}</a> : e.name}</td>
+                  <td><strong>{e.url ? <a href={e.url} rel="noopener">{e.name}</a> : e.name}</strong></td>
                   <td>{e.institution}</td>
-                  <td>{e.year}</td>
+                  <td class="dim tnum">{e.period ?? e.year}</td>
                 </tr>
               ))}
             </tbody>
@@ -46,5 +48,12 @@ const tr = t(lang);
         </div>
       </section>
     )}
+
+    <section class="section">
+      <div class="btn-row">
+        <a class="btn btn-primary" href={hrefFor(lang, '/projects')}>{tr('hero.caseStudies')}</a>
+        <a class="btn btn-ghost" href={hrefFor(lang, '/contact')}>{tr('cta.button')}</a>
+      </div>
+    </section>
   </div>
 </Layout>

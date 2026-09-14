@@ -7,9 +7,12 @@ dist/
 .astro/
 .output/
 
-# Aset hasil generate — jangan pernah di-commit (biner di git menggembungkan repo selamanya)
+# Aset hasil generate
+# PDF CV: dibangkitkan sesuai kebutuhan, jangan di-commit.
 public/cv/*.pdf
-public/og/
+# OG image: DI-COMMIT dengan sengaja (ADR-010). Dua PNG ±58 KB yang berubah
+# beberapa kali seumur situs — jauh lebih murah daripada memasang Chromium
+# di setiap build hanya untuk membangkitkan ulang berkas yang sama.
 
 # Artefak pengujian
 test-results/

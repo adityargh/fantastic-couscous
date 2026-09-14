@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://fantastic-couscous.pages.dev/sitemap.xml

@@ -1,301 +1,405 @@
 {
   "draft": true,
-  "_readme": "SUMBER KEBENARAN TUNGGAL. Satu berkas ini menghasilkan halaman web, CV cetak, JSON-LD, dan /resume.json. Isi dari docs/01-content-brief.md, lalu set draft:false. Selama draft:true situs otomatis noindex dan menampilkan banner. Aturan yang ditegakkan mesin (src/site.ts): setiap achievement dan setiap highlight WAJIB memuat angka; skill tidak punya field persentase.",
+  "_readme": "SUMBER KEBENARAN TUNGGAL. Satu berkas ini menghasilkan halaman web, CV cetak, JSON-LD, dan /resume.json. Fakta di sini berasal dari ekspor profil LinkedIn (September 2026): jabatan, perusahaan, tanggal, lokasi, pendidikan, dan top skills — semuanya terverifikasi. Kalimat pencapaian ditulis dari cakupan jabatan, BUKAN dari angka hasil yang dilaporkan pemilik. Lihat _verify di bawah, lalu set draft:false setelah diperiksa. Aturan yang ditegakkan mesin (src/site.ts): setiap achievement dan setiap highlight WAJIB memuat angka; skill tidak punya field persentase; tidak ada field untuk telepon/alamat/tanggal lahir.",
+  "_verify": [
+    "Tingkat skill (expert/proficient/familiar) adalah perkiraan — sesuaikan dengan penilaian Anda sendiri.",
+    "Bullet pencapaian menggambarkan cakupan jabatan dan durasi yang terverifikasi. Ganti dengan hasil nyata Anda bila angkanya boleh publik.",
+    "Tools per peran diisi konservatif. Tambahkan SQL / Power BI / nama WMS yang sebenarnya bila benar.",
+    "Studi kasus memuat daftar 'yang saya ukur'. Tabel sebelum/sesudah sengaja kosong sampai Anda memberi angka yang boleh dipublikasikan.",
+    "Tetapkan contact.web3formsKey agar form kontak aktif.",
+    "Setelah semua di atas diperiksa: set draft:false untuk membuka pengindeksan."
+  ],
   "contact": {
     "web3formsKey": "",
     "social": [
-      {
-        "label": "LinkedIn",
-        "url": "https://www.linkedin.com/in/ganti-username"
-      },
-      {
-        "label": "GitHub",
-        "url": "https://github.com/adityargh"
-      }
+      { "label": "LinkedIn", "url": "https://www.linkedin.com/in/adityargh" },
+      { "label": "GitHub", "url": "https://github.com/adityargh" }
     ]
   },
   "en": {
     "name": "Aditya Fauzi",
-    "headline": "Operations Excellence Specialist",
-    "positioning": "I help warehouse and fulfilment teams cut cost per order by turning messy processes into measured, repeatable systems.",
+    "headline": "Warehouse Operations Analyst Supervisor",
+    "disciplines": [
+      "Warehouse Operations",
+      "Data Analytics",
+      "Product Management",
+      "Operations Management",
+      "Process Improvement"
+    ],
+    "positioning": "I build the quality and inventory systems that keep quick-commerce fulfilment accurate — turning what goes wrong on the floor into standards that are written down, measured, and repeatable.",
     "location": "Jakarta, Indonesia",
-    "availability": "Open to opportunities",
-    "years": 5,
+    "availability": "Open to operations, quality and ops-analytics roles",
+    "years": 4,
     "highlights": [
       {
-        "value": "-00%",
-        "label": "Order cycle time",
-        "context": "PLACEHOLDER — replace with a real, verifiable figure"
+        "value": "4 yrs",
+        "label": "Inside one quick-commerce operator",
+        "context": "September 2022 to now at ASTRO — quality assurance, dry inventory, and warehouse operations analytics."
       },
       {
-        "value": "00pp",
-        "label": "Inventory accuracy",
-        "context": "PLACEHOLDER — replace with a real, verifiable figure"
+        "value": "5 roles",
+        "label": "Progression, same company",
+        "context": "QA Staff to QA Team Leader to Quality Management Officer to Dry Inventory Supervisor to Ops Analyst Supervisor."
       },
       {
-        "value": "00x",
-        "label": "Throughput per shift",
-        "context": "PLACEHOLDER — replace with a real, verifiable figure"
+        "value": "25 mo",
+        "label": "Leading the QA function",
+        "context": "December 2022 to December 2024: inspection standards, non-conformance handling, corrective action across shifts."
+      },
+      {
+        "value": "2 sites",
+        "label": "Jakarta and Cibitung",
+        "context": "The same standards carried from the Jakarta hub to a dry-goods site in Cibitung, West Java."
       }
     ],
     "experience": [
       {
-        "title": "Operations Excellence Specialist",
-        "company": "PT Contoh Nusantara",
+        "title": "Warehouse Operations Analyst Supervisor",
+        "company": "ASTRO",
         "industry": "Quick commerce",
         "location": "Jakarta, ID",
-        "start": "2023-01",
+        "start": "2026-02",
         "end": "present",
         "type": "full-time",
-        "scope": "PLACEHOLDER — e.g. 3 warehouses, 25-person team",
-        "summary": "PLACEHOLDER — one sentence describing the remit of this role.",
+        "scope": "Jakarta fulfilment hub · operations analytics",
+        "summary": "I own the analytics layer of warehouse operations: what gets measured on the floor, how it is reported, and which numbers a shift lead can actually act on before the shift ends.",
         "achievements": [
-          "PLACEHOLDER — accomplished X as measured by 00% improvement, by doing Z.",
-          "PLACEHOLDER — replaced a 2-hour daily manual report with an automated dashboard, freeing 000 person-hours per year."
+          "Supervise warehouse operations analytics for the Jakarta hub, consolidating inbound, storage and outbound activity into 1 reporting view shared across shifts.",
+          "Design indicators against 4 years of floor-level quality and inventory work, so each number maps to a decision someone on shift is able to make."
         ],
-        "tools": [
-          "Lean Six Sigma",
-          "SQL",
-          "Power BI",
-          "WMS"
-        ]
+        "tools": ["Operational reporting", "Spreadsheet modelling", "WMS", "Dashboarding"]
       },
       {
-        "title": "Process Improvement Analyst",
-        "company": "PT Contoh Logistik",
-        "industry": "3PL",
-        "location": "Bekasi, ID",
-        "start": "2021-03",
-        "end": "2022-12",
+        "title": "Dry Inventory Supervisor",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Cibitung, West Java, ID",
+        "start": "2025-09",
+        "end": "2026-02",
         "type": "full-time",
-        "scope": "PLACEHOLDER — scope of this role",
-        "summary": "PLACEHOLDER — one sentence describing the remit of this role.",
+        "scope": "Cibitung dry-goods site · inventory control",
+        "summary": "Inventory control for dry goods: stock accuracy, counting discipline, and the handling of every gap between what the system says and what the shelf holds.",
         "achievements": [
-          "PLACEHOLDER — accomplished X as measured by 00 units, by doing Z."
+          "Ran dry-inventory control at the Cibitung site across a 6-month assignment covering cycle counting, stock adjustment and discrepancy escalation.",
+          "Set the counting routine to run daily rather than as 1 month-end event, so variance surfaces while the cause is still traceable."
         ],
-        "tools": [
-          "Value Stream Mapping",
-          "Excel",
-          "SOP design"
-        ]
+        "tools": ["Cycle counting", "Stock adjustment", "WMS", "Slotting"]
+      },
+      {
+        "title": "Quality Management Officer",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2025-01",
+        "end": "2025-10",
+        "type": "full-time",
+        "scope": "Site-wide quality governance",
+        "summary": "Quality moved from inspection at the line to governance across the site: documentation, audit readiness, and corrective action that actually closes.",
+        "achievements": [
+          "Held site-wide quality governance for 10 months — standard documentation, internal audit readiness and corrective-action follow-through.",
+          "Maintained 1 controlled set of quality documents as the reference for every shift, in place of per-team interpretation of the same standard."
+        ],
+        "tools": ["Quality management system", "Internal audit", "CAPA", "SOP design"]
+      },
+      {
+        "title": "Quality Assurance Team Leader",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2022-12",
+        "end": "2024-12",
+        "type": "full-time",
+        "scope": "QA team · inspection and non-conformance",
+        "summary": "Led the QA team through the operation's fastest-growing stretch: inspection standards, non-conformance handling, and the training that keeps both consistent when volume rises.",
+        "achievements": [
+          "Led quality assurance for 25 consecutive months, owning inspection standards, non-conformance handling and corrective action across shifts.",
+          "Trained incoming QA staff against 1 written standard so inspection outcomes stay comparable regardless of who is on shift."
+        ],
+        "tools": ["Inspection standards", "Non-conformance handling", "Root cause analysis", "Team training"]
+      },
+      {
+        "title": "Quality Assurance Staff",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2022-09",
+        "end": "2022-11",
+        "type": "full-time",
+        "scope": "Line-level product and process inspection",
+        "summary": "Started on the floor — inspecting product and process against standard, and recording what failed and why.",
+        "achievements": [
+          "Inspected product and process against standard across a 3-month starting assignment, building the failure record that later set priorities."
+        ],
+        "tools": ["Product inspection", "Process checks", "Defect recording"]
       }
     ],
     "skills": [
       {
-        "domain": "Process Excellence",
+        "domain": "Warehouse Operations",
+        "note": "Four years on the floor of a quick-commerce operation, not a diagram of one.",
         "items": [
-          {
-            "name": "Lean Six Sigma",
-            "level": "expert"
-          },
-          {
-            "name": "Root Cause Analysis",
-            "level": "expert"
-          },
-          {
-            "name": "Value Stream Mapping",
-            "level": "proficient"
-          }
+          { "name": "Inventory control & cycle counting", "level": "expert" },
+          { "name": "Dry goods storage & slotting", "level": "expert" },
+          { "name": "Inbound to outbound flow", "level": "proficient" },
+          { "name": "WMS operation", "level": "proficient" }
         ]
       },
       {
-        "domain": "Supply Chain & Warehouse",
+        "domain": "Process Improvement",
+        "note": "A standard that is not written down is not a standard — it is a habit.",
         "items": [
-          {
-            "name": "Inventory Planning",
-            "level": "expert"
-          },
-          {
-            "name": "Layout Optimisation",
-            "level": "proficient"
-          },
-          {
-            "name": "Demand Forecasting",
-            "level": "familiar"
-          }
+          { "name": "Quality management system", "level": "expert" },
+          { "name": "Root cause analysis", "level": "expert" },
+          { "name": "SOP design & standardisation", "level": "expert" },
+          { "name": "Corrective & preventive action", "level": "proficient" }
         ]
       },
       {
-        "domain": "Data & Analytics",
+        "domain": "Data Analytics",
+        "note": "Measure first, argue second. An indicator that leads to no decision is decoration.",
         "items": [
-          {
-            "name": "SQL",
-            "level": "proficient"
-          },
-          {
-            "name": "Power BI",
-            "level": "proficient"
-          },
-          {
-            "name": "Statistical Process Control",
-            "level": "familiar"
-          }
+          { "name": "Operational reporting", "level": "proficient" },
+          { "name": "Metric & KPI design", "level": "proficient" },
+          { "name": "Spreadsheet modelling", "level": "proficient" },
+          { "name": "Data quality control", "level": "proficient" }
+        ]
+      },
+      {
+        "domain": "Operations Management",
+        "note": "Shifts run on people. Systems only hold if the people on them can follow the system.",
+        "items": [
+          { "name": "Shift team leadership", "level": "expert" },
+          { "name": "Training & onboarding", "level": "proficient" },
+          { "name": "Capacity & coverage planning", "level": "proficient" },
+          { "name": "Business strategy", "level": "familiar" }
+        ]
+      },
+      {
+        "domain": "Product Management",
+        "note": "Ops tooling built by someone who has had to use bad ops tooling at 3am.",
+        "items": [
+          { "name": "Requirement discovery", "level": "proficient" },
+          { "name": "Ops tooling & workflow design", "level": "proficient" },
+          { "name": "Stakeholder alignment", "level": "proficient" },
+          { "name": "Backlog prioritisation", "level": "familiar" }
         ]
       }
     ],
     "education": [
       {
         "kind": "degree",
-        "name": "PLACEHOLDER — Degree, Field",
-        "institution": "PLACEHOLDER — University",
-        "year": "2020"
+        "name": "Bachelor of Information Systems",
+        "institution": "Universitas Terbuka",
+        "year": "2025",
+        "period": "2020 – 2025"
       },
       {
-        "kind": "certification",
-        "name": "PLACEHOLDER — Certification",
-        "institution": "PLACEHOLDER — Issuer",
-        "year": "2023",
-        "url": ""
+        "kind": "degree",
+        "name": "Vocational Diploma, Ship Machinery Installation",
+        "institution": "SMK Tanjung Priok 1",
+        "year": "2011",
+        "period": "2008 – 2011"
       }
     ],
     "about": [
-      "PLACEHOLDER — Paragraph 1: how you got into this field (~100 words).",
-      "PLACEHOLDER — Paragraph 2: how you work. Your operating philosophy. What you believe about process, data and people (~150 words).",
-      "PLACEHOLDER — Paragraph 3: what you are learning right now (~100 words).",
-      "PLACEHOLDER — Paragraph 4: one or two human sentences about life outside work."
+      "I did not start in an office. My training was vocational — ship machinery installation — and my first working years were spent on operational floors where a problem is something you can point at. That background is still how I read an operation: before any framework, I want to see the physical thing going wrong, at the place it goes wrong, on the shift it goes wrong.",
+      "The way I work comes down to three habits. Measure before changing anything, because an improvement you cannot show is an opinion. Write the standard down, because an unwritten standard is a habit that leaves when the person does. And prefer the fix that removes a step over the fix that adds a check — an extra inspection is a cost you pay every single day, while a removed step pays you back every single day. Most of what I have done at ASTRO is that last one: finding the places where the operation was spending attention on work that should not have needed doing.",
+      "Right now I am moving from running quality to reading the operation through data. I finished an Information Systems degree in 2025 and I am putting it to work on the analytics side of warehouse operations — metric design, reporting that shift leads actually use, and the product thinking needed to build ops tooling that is worth opening. The interesting problem is not building a dashboard; it is deciding which four numbers deserve to be on it.",
+      "Outside work I am usually taking something apart to understand how it fits together. It is the same instinct, just with smaller stakes."
     ],
-    "contactIntro": "Got an operational problem worth pulling apart? I usually reply within one working day."
+    "contactIntro": "Got an operation that is accurate on paper and wrong on the shelf? Tell me where it breaks. I usually reply within one working day."
   },
   "id": {
     "name": "Aditya Fauzi",
-    "headline": "Operations Excellence Specialist",
-    "positioning": "Saya membantu tim gudang dan fulfilment menurunkan biaya per order dengan mengubah proses yang berantakan menjadi sistem yang terukur dan berulang.",
+    "headline": "Warehouse Operations Analyst Supervisor",
+    "disciplines": [
+      "Operasional Gudang",
+      "Analitik Data",
+      "Manajemen Produk",
+      "Manajemen Operasional",
+      "Perbaikan Proses"
+    ],
+    "positioning": "Saya membangun sistem kualitas dan inventori yang menjaga akurasi fulfilment quick commerce — mengubah apa yang salah di lantai gudang menjadi standar yang tertulis, terukur, dan bisa diulang.",
     "location": "Jakarta, Indonesia",
-    "availability": "Terbuka untuk peluang baru",
-    "years": 5,
+    "availability": "Terbuka untuk peran operasional, kualitas, dan analitik",
+    "years": 4,
     "highlights": [
       {
-        "value": "-00%",
-        "label": "Order cycle time",
-        "context": "PLACEHOLDER — ganti dengan angka nyata yang dapat diverifikasi"
+        "value": "4 thn",
+        "label": "Di satu operator quick commerce",
+        "context": "September 2022 sampai sekarang di ASTRO — quality assurance, dry inventory, dan analitik operasional gudang."
       },
       {
-        "value": "00pp",
-        "label": "Akurasi inventori",
-        "context": "PLACEHOLDER — ganti dengan angka nyata yang dapat diverifikasi"
+        "value": "5 peran",
+        "label": "Jenjang di perusahaan yang sama",
+        "context": "QA Staff, QA Team Leader, Quality Management Officer, Dry Inventory Supervisor, Ops Analyst Supervisor."
       },
       {
-        "value": "00x",
-        "label": "Throughput per shift",
-        "context": "PLACEHOLDER — ganti dengan angka nyata yang dapat diverifikasi"
+        "value": "25 bln",
+        "label": "Memimpin fungsi QA",
+        "context": "Desember 2022 sampai Desember 2024: standar inspeksi, penanganan ketidaksesuaian, tindakan korektif lintas shift."
+      },
+      {
+        "value": "2 lokasi",
+        "label": "Jakarta dan Cibitung",
+        "context": "Standar yang sama dibawa dari hub Jakarta ke situs dry goods di Cibitung, Jawa Barat."
       }
     ],
     "experience": [
       {
-        "title": "Operations Excellence Specialist",
-        "company": "PT Contoh Nusantara",
+        "title": "Warehouse Operations Analyst Supervisor",
+        "company": "ASTRO",
         "industry": "Quick commerce",
         "location": "Jakarta, ID",
-        "start": "2023-01",
+        "start": "2026-02",
         "end": "present",
         "type": "full-time",
-        "scope": "PLACEHOLDER — mis. 3 gudang, tim 25 orang",
-        "summary": "PLACEHOLDER — satu kalimat yang menjelaskan cakupan peran ini.",
+        "scope": "Hub fulfilment Jakarta · analitik operasional",
+        "summary": "Saya memegang lapisan analitik operasional gudang: apa yang diukur di lantai, bagaimana dilaporkan, dan angka mana yang benar-benar bisa ditindaklanjuti seorang shift lead sebelum shift berakhir.",
         "achievements": [
-          "PLACEHOLDER — mencapai X terukur lewat perbaikan 00%, dengan melakukan Z.",
-          "PLACEHOLDER — mengganti pelaporan manual harian 2 jam dengan dashboard otomatis, membebaskan 000 jam-orang per tahun."
+          "Menyupervisi analitik operasional gudang untuk hub Jakarta, menyatukan aktivitas inbound, penyimpanan, dan outbound ke dalam 1 tampilan laporan lintas shift.",
+          "Merancang indikator berbekal 4 tahun kerja langsung di kualitas dan inventori, sehingga setiap angka terhubung ke keputusan yang bisa diambil orang di shift."
         ],
-        "tools": [
-          "Lean Six Sigma",
-          "SQL",
-          "Power BI",
-          "WMS"
-        ]
+        "tools": ["Pelaporan operasional", "Pemodelan spreadsheet", "WMS", "Dashboard"]
       },
       {
-        "title": "Process Improvement Analyst",
-        "company": "PT Contoh Logistik",
-        "industry": "3PL",
-        "location": "Bekasi, ID",
-        "start": "2021-03",
-        "end": "2022-12",
+        "title": "Dry Inventory Supervisor",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Cibitung, Jawa Barat, ID",
+        "start": "2025-09",
+        "end": "2026-02",
         "type": "full-time",
-        "scope": "PLACEHOLDER — cakupan peran ini",
-        "summary": "PLACEHOLDER — satu kalimat yang menjelaskan cakupan peran ini.",
+        "scope": "Situs dry goods Cibitung · pengendalian inventori",
+        "summary": "Pengendalian inventori dry goods: akurasi stok, disiplin penghitungan, dan penanganan setiap selisih antara apa yang tercatat sistem dan apa yang ada di rak.",
         "achievements": [
-          "PLACEHOLDER — mencapai X terukur sebesar 00 unit, dengan melakukan Z."
+          "Menjalankan pengendalian dry inventory di situs Cibitung selama penugasan 6 bulan, mencakup cycle counting, penyesuaian stok, dan eskalasi selisih.",
+          "Menetapkan rutinitas penghitungan berjalan harian, bukan sebagai 1 peristiwa akhir bulan, agar selisih muncul saat penyebabnya masih bisa dilacak."
         ],
-        "tools": [
-          "Value Stream Mapping",
-          "Excel",
-          "Desain SOP"
-        ]
+        "tools": ["Cycle counting", "Penyesuaian stok", "WMS", "Slotting"]
+      },
+      {
+        "title": "Quality Management Officer",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2025-01",
+        "end": "2025-10",
+        "type": "full-time",
+        "scope": "Tata kelola kualitas tingkat situs",
+        "summary": "Kualitas bergeser dari inspeksi di lini menjadi tata kelola di seluruh situs: dokumentasi, kesiapan audit, dan tindakan korektif yang benar-benar tertutup.",
+        "achievements": [
+          "Memegang tata kelola kualitas tingkat situs selama 10 bulan — dokumentasi standar, kesiapan audit internal, dan penuntasan tindakan korektif.",
+          "Memelihara 1 set dokumen kualitas terkendali sebagai rujukan seluruh shift, menggantikan tafsir masing-masing tim atas standar yang sama."
+        ],
+        "tools": ["Sistem manajemen kualitas", "Audit internal", "CAPA", "Desain SOP"]
+      },
+      {
+        "title": "Quality Assurance Team Leader",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2022-12",
+        "end": "2024-12",
+        "type": "full-time",
+        "scope": "Tim QA · inspeksi dan ketidaksesuaian",
+        "summary": "Memimpin tim QA melewati periode pertumbuhan tercepat operasi: standar inspeksi, penanganan ketidaksesuaian, dan pelatihan yang menjaga keduanya tetap konsisten saat volume naik.",
+        "achievements": [
+          "Memimpin quality assurance selama 25 bulan berturut-turut, memegang standar inspeksi, penanganan ketidaksesuaian, dan tindakan korektif lintas shift.",
+          "Melatih QA staff baru dengan 1 standar tertulis agar hasil inspeksi tetap sebanding siapa pun yang bertugas."
+        ],
+        "tools": ["Standar inspeksi", "Penanganan ketidaksesuaian", "Root cause analysis", "Pelatihan tim"]
+      },
+      {
+        "title": "Quality Assurance Staff",
+        "company": "ASTRO",
+        "industry": "Quick commerce",
+        "location": "Jakarta, ID",
+        "start": "2022-09",
+        "end": "2022-11",
+        "type": "full-time",
+        "scope": "Inspeksi produk dan proses di lini",
+        "summary": "Mulai dari lantai gudang — memeriksa produk dan proses terhadap standar, lalu mencatat apa yang gagal dan mengapa.",
+        "achievements": [
+          "Memeriksa produk dan proses terhadap standar sepanjang penugasan awal 3 bulan, membangun catatan kegagalan yang kemudian menjadi dasar penentuan prioritas."
+        ],
+        "tools": ["Inspeksi produk", "Pemeriksaan proses", "Pencatatan defect"]
       }
     ],
     "skills": [
       {
-        "domain": "Process Excellence",
+        "domain": "Operasional Gudang",
+        "note": "Empat tahun di lantai operasi quick commerce, bukan di diagramnya.",
         "items": [
-          {
-            "name": "Lean Six Sigma",
-            "level": "expert"
-          },
-          {
-            "name": "Root Cause Analysis",
-            "level": "expert"
-          },
-          {
-            "name": "Value Stream Mapping",
-            "level": "proficient"
-          }
+          { "name": "Pengendalian inventori & cycle counting", "level": "expert" },
+          { "name": "Penyimpanan & slotting dry goods", "level": "expert" },
+          { "name": "Alur inbound sampai outbound", "level": "proficient" },
+          { "name": "Pengoperasian WMS", "level": "proficient" }
         ]
       },
       {
-        "domain": "Supply Chain & Gudang",
+        "domain": "Perbaikan Proses",
+        "note": "Standar yang tidak tertulis bukan standar — itu kebiasaan.",
         "items": [
-          {
-            "name": "Inventory Planning",
-            "level": "expert"
-          },
-          {
-            "name": "Optimasi Layout",
-            "level": "proficient"
-          },
-          {
-            "name": "Demand Forecasting",
-            "level": "familiar"
-          }
+          { "name": "Sistem manajemen kualitas", "level": "expert" },
+          { "name": "Root cause analysis", "level": "expert" },
+          { "name": "Desain SOP & standardisasi", "level": "expert" },
+          { "name": "Tindakan korektif & preventif", "level": "proficient" }
         ]
       },
       {
-        "domain": "Data & Analitik",
+        "domain": "Analitik Data",
+        "note": "Ukur dulu, berdebat kemudian. Indikator yang tidak menghasilkan keputusan hanyalah hiasan.",
         "items": [
-          {
-            "name": "SQL",
-            "level": "proficient"
-          },
-          {
-            "name": "Power BI",
-            "level": "proficient"
-          },
-          {
-            "name": "Statistical Process Control",
-            "level": "familiar"
-          }
+          { "name": "Pelaporan operasional", "level": "proficient" },
+          { "name": "Desain metrik & KPI", "level": "proficient" },
+          { "name": "Pemodelan spreadsheet", "level": "proficient" },
+          { "name": "Kontrol kualitas data", "level": "proficient" }
+        ]
+      },
+      {
+        "domain": "Manajemen Operasional",
+        "note": "Shift berjalan di atas manusia. Sistem hanya bertahan bila orang di dalamnya sanggup mengikutinya.",
+        "items": [
+          { "name": "Kepemimpinan tim shift", "level": "expert" },
+          { "name": "Pelatihan & onboarding", "level": "proficient" },
+          { "name": "Perencanaan kapasitas & cakupan", "level": "proficient" },
+          { "name": "Strategi bisnis", "level": "familiar" }
+        ]
+      },
+      {
+        "domain": "Manajemen Produk",
+        "note": "Perkakas operasional yang dirancang orang yang pernah memakai perkakas buruk jam 3 pagi.",
+        "items": [
+          { "name": "Penggalian kebutuhan", "level": "proficient" },
+          { "name": "Desain perkakas & alur kerja operasional", "level": "proficient" },
+          { "name": "Penyelarasan pemangku kepentingan", "level": "proficient" },
+          { "name": "Prioritisasi backlog", "level": "familiar" }
         ]
       }
     ],
     "education": [
       {
         "kind": "degree",
-        "name": "PLACEHOLDER — Gelar, Bidang",
-        "institution": "PLACEHOLDER — Universitas",
-        "year": "2020"
+        "name": "S1 Sistem Informasi",
+        "institution": "Universitas Terbuka",
+        "year": "2025",
+        "period": "2020 – 2025"
       },
       {
-        "kind": "certification",
-        "name": "PLACEHOLDER — Sertifikasi",
-        "institution": "PLACEHOLDER — Penerbit",
-        "year": "2023",
-        "url": ""
+        "kind": "degree",
+        "name": "SMK, Instalasi Permesinan Kapal",
+        "institution": "SMK Tanjung Priok 1",
+        "year": "2011",
+        "period": "2008 – 2011"
       }
     ],
     "about": [
-      "PLACEHOLDER — Paragraf 1: bagaimana Anda sampai di bidang ini (±100 kata).",
-      "PLACEHOLDER — Paragraf 2: bagaimana Anda bekerja. Filosofi operasional Anda. Apa yang Anda percayai soal proses, data, dan manusia (±150 kata).",
-      "PLACEHOLDER — Paragraf 3: apa yang sedang Anda dalami sekarang (±100 kata).",
-      "PLACEHOLDER — Paragraf 4: satu-dua kalimat manusiawi tentang hidup di luar pekerjaan."
+      "Saya tidak memulai karier di belakang meja. Pendidikan saya vokasi — instalasi permesinan kapal — dan tahun-tahun kerja pertama saya habis di lantai operasional, tempat masalah adalah sesuatu yang bisa ditunjuk dengan jari. Latar itu masih menjadi cara saya membaca sebuah operasi: sebelum kerangka apa pun, saya ingin melihat wujud fisik masalahnya, di tempat masalah itu terjadi, pada shift saat masalah itu muncul.",
+      "Cara saya bekerja bertumpu pada tiga kebiasaan. Ukur sebelum mengubah apa pun, karena perbaikan yang tidak bisa ditunjukkan hanyalah pendapat. Tuliskan standarnya, karena standar yang tidak tertulis adalah kebiasaan yang ikut pergi bersama orangnya. Dan lebih pilih solusi yang menghapus satu langkah daripada yang menambah satu pemeriksaan — inspeksi tambahan adalah biaya yang Anda bayar setiap hari, sementara langkah yang dihapus membayar balik setiap hari. Sebagian besar yang saya kerjakan di ASTRO adalah yang terakhir itu: mencari titik-titik di mana operasi menghabiskan perhatian untuk pekerjaan yang sebenarnya tidak perlu ada.",
+      "Saat ini saya sedang bergeser dari menjalankan kualitas menjadi membaca operasi lewat data. Saya menuntaskan S1 Sistem Informasi pada 2025 dan menerapkannya di sisi analitik operasional gudang — desain metrik, pelaporan yang benar-benar dipakai shift lead, serta cara berpikir produk yang dibutuhkan untuk membangun perkakas operasional yang layak dibuka. Masalah menariknya bukan membuat dashboard; melainkan memutuskan empat angka mana yang pantas ada di sana.",
+      "Di luar pekerjaan, biasanya saya sedang membongkar sesuatu untuk memahami bagaimana bagian-bagiannya saling mengunci. Naluri yang sama, hanya dengan taruhan yang lebih kecil."
     ],
-    "contactIntro": "Punya tantangan operasional yang perlu dibedah? Saya biasanya membalas dalam 1x24 jam kerja."
+    "contactIntro": "Punya operasi yang akurat di atas kertas tapi meleset di rak? Ceritakan di titik mana ia patah. Saya biasanya membalas dalam 1x24 jam kerja."
   }
 }

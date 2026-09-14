@@ -8,9 +8,11 @@ Setiap butir bersifat **biner**: selesai atau tidak. Tidak ada "hampir".
 
 ## Gate A — Konten *(kunci di akhir Sprint 4)*
 
-- [ ] Nol placeholder, `TBD`, *lorem ipsum*, atau kurung siku kosong di seluruh situs
+- [ ] Nol placeholder, `TBD`, *lorem ipsum*, atau kurung siku kosong di seluruh situs *(ditegakkan CI)*
+- [ ] **Setiap kalimat pencapaian dibaca ulang pemilik** — ditulis dari cakupan jabatan, bukan dari angka yang Anda laporkan (ADR-010)
+- [ ] `_verify` di `src/data.json` sudah kosong atau seluruh butirnya ditangani
 - [ ] Setiap bullet pengalaman memuat angka terukur *(ditegakkan skema Zod — tapi verifikasi manual sekali)*
-- [ ] Ketiga studi kasus lengkap 6 bagian dengan tabel sebelum/sesudah terisi
+- [ ] Ketiga studi kasus lengkap 6 bagian; `measured` terisi. Tabel sebelum/sesudah opsional — isi hanya bila angkanya boleh publik
 - [ ] Positioning statement identik di: hero situs, meta description, bio LinkedIn, ringkasan CV PDF
 - [ ] Nol typo — dibaca oleh **orang kedua**, bukan hanya Anda *(Anda buta terhadap teks sendiri)*
 - [ ] Versi ID terbaca natural, bukan hasil terjemahan mesin
@@ -23,12 +25,10 @@ Setiap butir bersifat **biner**: selesai atau tidak. Tidak ada "hampir".
 - [ ] Setiap tautan internal mengarah ke halaman nyata (dikonfirmasi lychee, nol 404)
 - [ ] Setiap tautan eksternal terbuka dengan benar dan pakai `rel="noopener"`
 - [ ] Pengalih bahasa mempertahankan halaman saat ini di seluruh 8 kombinasi rute
-- [ ] Kedua PDF CV dapat diunduh dan mengembalikan HTTP 200
-- [ ] Isi PDF **identik** dengan konten web *(dibangkitkan otomatis — verifikasi sekali secara manual)*
+- [ ] `/cv` dan `/id/cv` mencetak rapi ke A4 dari browser, teks dapat diseleksi *(ADR-009 #8: rute cetak menggantikan PDF terhosting)*
 - [ ] Form kontak benar-benar mengirim → email uji **diterima** di inbox Anda
 - [ ] Halaman sukses & galat form tampil dan punya jalur kembali
 - [ ] Honeypot bekerja: submit terisi kolom `botcheck` harus ditolak
-- [ ] Turnstile tampil dan lolos verifikasi
 - [ ] Toggle tema berfungsi; pilihan bertahan setelah reload; **tanpa flash** saat muat
 - [ ] Halaman 404 kustom tampil untuk URL acak, dengan tautan kembali ke beranda
 - [ ] `/resume.json` mengembalikan JSON valid
@@ -40,8 +40,7 @@ Setiap butir bersifat **biner**: selesai atau tidak. Tidak ada "hampir".
 - [ ] LCP < 1,8 s pada throttling Slow 4G
 - [ ] CLS < 0,1 di semua halaman *(cek khusus: gambar dan pemuatan font)*
 - [ ] Berat beranda < 300 KB transfer
-- [ ] Seluruh gambar punya `width`/`height` eksplisit dan disajikan sebagai AVIF/WebP
-- [ ] Font di-*preload*; tanpa lonjakan FOIT/FOUT yang terlihat
+- [ ] Nol gambar di jalur kritis dan nol web font *(ADR-009 #5–#6 — verifikasi tidak ada yang menyusup masuk)*
 - [ ] Nol permintaan render-blocking selain CSS kritis + skrip tema
 
 ## Gate D — Aksesibilitas
@@ -63,10 +62,10 @@ Setiap butir bersifat **biner**: selesai atau tidak. Tidak ada "hampir".
 - [ ] `hreflang` EN/ID/x-default saling merujuk dengan benar di seluruh halaman
 - [ ] Canonical absolut dan self-referencing
 - [ ] JSON-LD `Person` lolos [Rich Results Test](https://search.google.com/test/rich-results) tanpa galat
-- [ ] OG image ter-generate; unfurl **diuji nyata** di WhatsApp, LinkedIn, dan Slack
+- [ ] OG image ter-commit di `public/og/`; unfurl **diuji nyata** di WhatsApp, LinkedIn, dan Slack
 - [ ] `sitemap-index.xml` dapat diakses dan memuat seluruh halaman kanonik
-- [ ] `robots.txt` mengizinkan crawling dan menunjuk sitemap; `/print/*` diblokir
-- [ ] Rute `/print/*` mengembalikan `noindex`
+- [ ] `robots.txt` mengizinkan crawling dan menunjuk sitemap *(otomatis begitu `draft:false`)*
+- [ ] `/contact/success` dan `/contact/error` mengembalikan `noindex` dan tidak ada di sitemap
 - [ ] Situs terdaftar di **Google Search Console** dan **Bing Webmaster Tools**; sitemap dikirim
 - [ ] Diminta pengindeksan manual untuk beranda
 
@@ -78,13 +77,13 @@ Setiap butir bersifat **biner**: selesai atau tidak. Tidak ada "hampir".
 - [ ] Nol secret atau kredensial di riwayat git *(`git log -p | grep -iE "api[_-]?key|secret|password|token"`)*
 - [ ] Verifikasi domain aktif di dasbor Web3Forms
 - [ ] Analitik terkonfirmasi tanpa cookie *(cek tab Application → Cookies harus kosong)*
-- [ ] Tidak ada skrip pihak ketiga selain Turnstile dan Cloudflare Analytics
-- [ ] Branch protection aktif di `main`; CI wajib hijau sebelum merge
+- [ ] Nol skrip pihak ketiga *(saat ini benar-benar nol — Turnstile dilepas di ADR-009 #10)*
+- [ ] **Putuskan**: branch protection di `main` ATAU alur auto-push di `CLAUDE.md`. Keduanya tidak bisa aktif bersamaan — branch protection akan memblokir Stop hook
 
 ## Gate G — Lintas Perangkat *(perangkat fisik, bukan hanya emulator)*
 
 - [ ] iPhone Safari — Android Chrome — Desktop Chrome/Firefox/Safari/Edge
-- [ ] Viewport 360 px: nol scroll horizontal
+- [ ] Viewport 320–414 px: nol scroll horizontal *(sudah diuji otomatis di ADR-010 — konfirmasi di perangkat fisik)*
 - [ ] Viewport 1440 px+: konten tidak melebar berlebihan *(lebar baca dibatasi)*
 - [ ] Landscape di ponsel tidak merusak tata letak
 - [ ] Cetak dari browser menghasilkan dokumen rapi *(bukan hanya pipeline PDF)*
@@ -145,7 +144,7 @@ Setiap butir bersifat **biner**: selesai atau tidak. Tidak ada "hampir".
 | Deploy gagal | Baca log build Cloudflare | Reproduksi lokal `pnpm build` → perbaiki → push. **Produksi tetap menyajikan build terakhir yang sukses — tanpa downtime** |
 | Konten baru tidak muncul | Build sukses tapi halaman lama | Purge cache di dasbor Cloudflare; cek header `Cache-Control` |
 | Form tidak mengirim email | Cek dasbor Web3Forms: kuota & verifikasi domain | Kuota habis → tunggu reset atau pindah penyedia. Darurat → ganti dengan tautan `mailto:` |
-| Spam membanjir | Turnstile terlewati | Naikkan mode Turnstile ke "Managed"; tambahkan rate limit |
+| Spam membanjir | Honeypot saja tidak cukup | Pasang Cloudflare Turnstile — dilepas di ADR-009 #10 justru agar bisa ditambahkan hanya bila spam benar-benar muncul |
 | Lighthouse CI gagal setelah perubahan sepele | Biasanya gambar tanpa dimensi atau font baru | Buka laporan LHCI (tautan ada di log CI) → lihat audit yang gagal |
 | Trafik pencarian turun | Search Console → Coverage + Performance | Verifikasi canonical & `hreflang` utuh; cek penalti manual |
 | PDF berbeda dari web | Job PDF gagal diam-diam | Step assertion di CI seharusnya menangkap ini — jika tidak, perkuat assertion-nya |

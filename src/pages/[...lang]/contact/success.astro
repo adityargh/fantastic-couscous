@@ -1,0 +1,8 @@
+---
+import ContactState from '../../../ContactState.astro';
+import { langPaths, type Lang } from '../../../site';
+export const getStaticPaths = langPaths;
+type Props = { lang: Lang };
+const { lang } = Astro.props;
+---
+<ContactState lang={lang} ok={true} />

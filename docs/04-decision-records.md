@@ -259,6 +259,77 @@ Format: `Status · Tanggal · Keputusan · Konteks · Alternatif · Konsekuensi`
 
 ---
 
+## ADR-010 — Konten nyata, model metrik jujur, dan revamp UI/UX
+
+**Status:** Diterima · 14 Sep 2026 · Melengkapi ADR-008 dan ADR-009
+
+**Keputusan:** Situs diisi dengan konten nyata dari ekspor profil LinkedIn pemilik (khusus masa kerja di ASTRO), model data diubah agar bisa jujur tentang angka yang belum terverifikasi, dan seluruh antarmuka dirancang ulang.
+
+**Konteks:** MVP sebelumnya seluruhnya placeholder. Pemilik menyediakan ekspor PDF profil LinkedIn sebagai modal konten, meminta hanya pengalaman ASTRO yang diambil, dan meminta revamp menyeluruh UI/UX serta desain interaksinya.
+
+### 1. Sumber konten dan batas kejujuran
+
+Yang **terverifikasi** dari ekspor LinkedIn dan dipakai apa adanya: nama, jabatan, perusahaan, tanggal mulai/selesai tiap peran, lokasi, pendidikan, dan top skills. Lima peran di ASTRO (Sep 2022 – sekarang, 4 tahun 1 bulan) dipakai; delapan perusahaan lain sengaja tidak ditampilkan atas permintaan pemilik.
+
+Yang **tidak ada** di sumber: angka hasil (persentase perbaikan, penghematan, throughput). Angka semacam itu **tidak dikarang**. Konsekuensinya pada model data:
+
+| Aturan lama | Aturan baru | Alasan |
+| :--- | :--- | :--- |
+| Bullet pencapaian wajib memuat angka | Tetap — tetapi angkanya diambil dari fakta struktural yang bisa diverifikasi (durasi, jumlah peran, jumlah lokasi) | Aturannya sehat; yang salah adalah memaksanya dipenuhi dengan angka karangan |
+| Seksi "Impact in numbers" | Diganti "Track record in numbers" / "Rekam jejak dalam angka" | Label lama menjanjikan dampak; isinya rekam jejak. Menyesuaikan label lebih jujur daripada menyesuaikan isi |
+| `metrics` studi kasus wajib | `metrics` menjadi **opsional**; ditambah `measured` yang **wajib** (2–5 indikator) | Menyebut indikator yang Anda kemudikan adalah sinyal kompetensi operasional yang nyata, dan tidak menuntut angka yang mungkin rahasia perusahaan. Tabel sebelum/sesudah muncul otomatis begitu angkanya diisi |
+| Banner draft: "konten masih placeholder" | "angka menunggu verifikasi pemilik" | Tidak ada lagi placeholder; yang tersisa adalah verifikasi |
+
+Daftar hal yang menunggu verifikasi pemilik tercatat di `_verify` dalam `src/data.json`.
+
+### 2. Perubahan skema
+
+| # | Perubahan | Alasan |
+| :-- | :--- | :--- |
+| 1 | `headline` tetap dibatasi 80 karakter dan diisi **jabatan nyata**; pilar keahlian pindah ke `disciplines[]` | Headline LinkedIn pemilik (103 karakter, lima pilar dipisah pipa) akan membuat `<title>` sepanjang 120 karakter dan terpotong Google. Pilar itu kini tampil sebagai chip di hero dan `keywords` di JSON Resume — seluruh isinya tetap terbaca |
+| 2 | `skills[].note` opsional | Satu kalimat prinsip per domain memberi suara pada daftar yang biasanya datar |
+| 3 | `education[].period` opsional | Rentang tahun lebih informatif daripada tahun lulus saja |
+| 4 | Helper `tenures()`, `monthsBetween()`, `durationLabel()` | Lima peran di satu perusahaan adalah sinyal karier terkuat di profil ini. Mengelompokkannya jadi satu jalur menuntut perhitungan durasi — dihitung dari tanggal, tidak pernah diketik manual, sehingga tidak bisa basi |
+
+### 3. Revamp UI/UX — "Control Room"
+
+Premisnya: profil ini milik orang yang bekerja dengan presisi, angka, dan standar tertulis. Antarmukanya harus terasa seperti panel instrumen, bukan brosur agensi.
+
+| Elemen | Keputusan | Alasan desain interaksi |
+| :--- | :--- | :--- |
+| **Rel karier** | Lima peran ditampilkan sebagai satu rel vertikal bersimpul di bawah satu blok perusahaan, bukan lima kartu terpisah. Pada ≥920 px tanggal pindah ke gutter kiri | Kenaikan jenjang terbaca sebagai satu jalur dalam sekali pandang. Kolom tanggal yang sejajar bisa dipindai sendiri tanpa membaca isinya |
+| **Meter tingkat skill** | Tiga titik ordinal, bukan bar persentase | Bar persentase adalah presisi semu — "SQL 78%" tidak berarti apa pun. Tiga langkah jujur soal kekasarannya. Tingkat juga diumumkan ke screen reader sebagai teks |
+| **Angka tabular** | `font-variant-numeric: tabular-nums` pada seluruh angka | Situs tentang pengukuran tidak boleh punya digit yang bergoyang antar baris |
+| **Toggle tema 3 status** | Ikut sistem → terang → gelap | Biner memaksa pengguna memilih; "ikut sistem" adalah default yang benar dan harus bisa dikembalikan |
+| **Latar kisi hero** | Dua gradien CSS bertopeng radial | Nol byte gambar, memberi tekstur "cetak biru" yang sesuai domain |
+| **Halaman hasil form** | `/contact/success` dan `/contact/error`, keduanya `noindex` | Form tanpa halaman hasil membuat pengirim menebak-nebak apakah pesannya sampai |
+| **Daftar isi studi kasus** | Sticky pada ≥1000 px, dibangkitkan dari heading | Studi kasus 700–900 kata butuh orientasi; dibangkitkan otomatis agar tidak pernah tidak sinkron |
+
+### 4. OG image di-commit, bukan dibangkitkan saat build
+
+Dibangkitkan lewat `scripts/og.mjs` memakai Chromium sistem **tanpa satu pun dependensi npm**, lalu hasilnya di-commit (dua PNG, ±58 KB). Kartunya hanya berubah saat nama, jabatan, atau positioning berubah — beberapa kali seumur situs. Memasang Chromium ±130 MB pada setiap deploy demi berkas yang nyaris tak pernah berubah adalah biaya tanpa hasil.
+
+Skrip ini mengukur sendiri kompensasi bingkai jendela Chrome headless (`--window-size` bukan ukuran viewport; selisihnya 87 px di lingkungan CI ini) dan memotong baris bawah PNG-nya. Memangkas baris TERAKHIR tidak menuntut penyaringan ulang, sehingga pemotongnya muat dalam ±40 baris `node:zlib`.
+
+### 5. Penjaga CI diperkuat
+
+ADR-009 mencatat jebakan nyata: rute yang salah bentuk membuang **seluruh** halaman bahasa Indonesia tanpa galat. Penjaga CI saat itu tidak menutupnya — daftar assertion-nya melewatkan seluruh halaman studi kasus dan rute ID untuk `projects` dan `contact`. Kini CI memeriksa 26 berkas secara eksplisit, **plus** paritas jumlah halaman EN vs ID, nol placeholder, dan nol tautan internal rusak. Paritas adalah invarian struktural: ia menangkap halaman baru yang lupa dibuatkan pasangannya, tanpa perlu daftar diperbarui tiap kali.
+
+### 6. URL produksi disatukan
+
+Sebelumnya tersebar di 6 tempat. Kini: `site` di `astro.config.mjs` sebagai sumber kebenaran, `FALLBACK_SITE` di `src/site.ts` sebagai satu-satunya cadangan, dan `robots.txt` **dibangkitkan** (bukan statis) sehingga URL sitemap-nya ikut otomatis. Ganti domain = 2 suntingan, bukan 6.
+
+**Konsekuensi:**
+- ✅ Nol placeholder; seluruh fakta dapat ditelusuri ke ekspor LinkedIn
+- ✅ Nol overflow horizontal terverifikasi otomatis pada 8 halaman × 6 lebar (320–1024 px)
+- ✅ Data privat (alamat, nomor telepon, email pribadi) tidak pernah masuk repositori — skema `.strict()` tidak menyediakan field-nya
+- ✅ OG image nyata, `summary_large_image`, unfurl tidak lagi polos
+- ⚠️ Beranda naik dari 5,5 KB → **10,6 KB gzip**. Penyebabnya CSS sistem desain yang di-inline plus konten nyata yang jauh lebih banyak (5 peran berikut bullet, 5 domain skill, 3 kartu studi kasus). Masih 3,5% dari budget 300 KB
+- ⚠️ Studi kasus belum punya tabel sebelum/sesudah sampai pemilik memberi angka yang boleh dipublikasikan
+- ⚠️ `draft: true` dipertahankan: konten ditulis dari catatan karier pemilik dan harus dibaca ulang olehnya sebelum diindeks
+
+---
+
 ## Template ADR Baru
 
 Salin blok ini setiap kali membuat keputusan arsitektural yang signifikan. Perubahan ruang lingkup **harus** melewati sini, bukan diputuskan diam-diam di tengah implementasi.

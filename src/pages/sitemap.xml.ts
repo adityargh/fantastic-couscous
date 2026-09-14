@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { HTML_LANG, LOCALES, PAGES, DEFAULT_LANG, hrefFor } from '../site';
+import { HTML_LANG, LOCALES, PAGES, DEFAULT_LANG, FALLBACK_SITE, hrefFor } from '../site';
 
 /**
  * Sitemap ditulis tangan (±30 baris) alih-alih memasang @astrojs/sitemap.
@@ -9,7 +9,7 @@ import { HTML_LANG, LOCALES, PAGES, DEFAULT_LANG, hrefFor } from '../site';
 const xml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 export const GET: APIRoute = async ({ site }) => {
-  const base = site ?? new URL('https://fantastic-couscous.pages.dev');
+  const base = site ?? FALLBACK_SITE;
   const slugs = [...new Set((await getCollection('projects')).map((e) => e.data.slug))];
   const routes = [...PAGES, ...slugs.map((s) => `/projects/${s}`)];
 

@@ -1,16 +1,17 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import Layout from './Layout.astro';
-import { hrefFor, profileOf, t, type Lang } from './site';
+import { FALLBACK_SITE, hrefFor, profileOf, t, type Lang } from './site';
 
 interface Props { entry: CollectionEntry<'projects'>; lang: Lang }
 const { entry, lang } = Astro.props;
 
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const p = profileOf(lang);
 const tr = t(lang);
 const d = entry.data;
-const site = Astro.site ?? new URL('https://fantastic-couscous.pages.dev');
+const site = Astro.site ?? FALLBACK_SITE;
+const toc = headings.filter((h) => h.depth === 2);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -18,8 +19,10 @@ const jsonLd = {
   headline: d.title,
   description: d.description,
   inLanguage: lang,
-  author: { '@type': 'Person', name: p.name },
+  keywords: d.tags.join(', '),
+  author: { '@type': 'Person', name: p.name, jobTitle: p.headline },
   url: new URL(hrefFor(lang, `/projects/${d.slug}`), site).href,
+  image: new URL(`/og/og-${lang}.png`, site).href,
 };
 ---
 <Layout
@@ -30,51 +33,80 @@ const jsonLd = {
   jsonLd={jsonLd}
 >
   <div class="wrap">
-    <article class="band">
-      <div class="band-head">
-        <p class="eyebrow">{d.tags.join(' · ')}</p>
-        <h1>{d.title}</h1>
-        <p class="lede">{d.description}</p>
+    <article class="section">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">{tr('nav.projects')}</p>
+        <ul class="chips">{d.tags.map((tag) => <li class="chip chip-brand">{tag}</li>)}</ul>
       </div>
 
-      <div class="tablewrap" style="margin-bottom:var(--xl)">
-        <table>
-          <tbody>
-            <tr><td>{tr('proj.result')}</td><td>{d.headline}</td></tr>
-            <tr><td>{tr('proj.role')}</td><td>{d.role}</td></tr>
-            <tr><td>{tr('proj.period')}</td><td>{d.period}</td></tr>
-          </tbody>
-        </table>
+      <h1 style="max-width:20ch">{d.title}</h1>
+      <p class="lede" style="margin-block:var(--s4) var(--s6)">{d.description}</p>
+
+      <div class="case-facts" style="margin-bottom:var(--s7)">
+        <div class="case-fact">
+          <span class="eyebrow">{tr('proj.result')}</span>
+          <strong>{d.headline}</strong>
+        </div>
+        <div class="case-fact">
+          <span class="eyebrow">{tr('proj.role')}</span>
+          <strong>{d.role}</strong>
+        </div>
+        <div class="case-fact">
+          <span class="eyebrow">{tr('proj.period')}</span>
+          <strong class="tnum">{d.period}</strong>
+        </div>
       </div>
 
-      <div class="prose"><Content /></div>
+      <div class="case-layout">
+        <div class="prose">
+          <Content />
 
-      <h2 style="margin-top:var(--xxl);margin-bottom:var(--md)">{tr('proj.metrics')}</h2>
-      <div class="tablewrap">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">{tr('proj.metrics')}</th>
-              <th scope="col">{tr('proj.before')}</th>
-              <th scope="col">{tr('proj.after')}</th>
-              <th scope="col">{tr('proj.delta')}</th>
-              <th scope="col">{tr('proj.window')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {d.metrics.map((m) => (
-              <tr>
-                <td>{m.name}</td><td>{m.before}</td><td>{m.after}</td>
-                <td>{m.delta}</td><td>{m.window}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <h2 id="measured">{tr('proj.measured')}</h2>
+          <p class="muted">{tr('proj.measuredHint')}</p>
+          <ul class="measured">
+            {d.measured.map((m) => <li>{m}</li>)}
+          </ul>
+
+          {d.metrics && d.metrics.length > 0 && (
+            <>
+              <h2 id="outcome">{tr('proj.metrics')}</h2>
+              <div class="tablewrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">{tr('proj.metrics')}</th>
+                      <th scope="col">{tr('proj.before')}</th>
+                      <th scope="col">{tr('proj.after')}</th>
+                      <th scope="col">{tr('proj.delta')}</th>
+                      <th scope="col">{tr('proj.window')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {d.metrics.map((m) => (
+                      <tr>
+                        <td>{m.name}</td><td>{m.before}</td><td>{m.after}</td>
+                        <td>{m.delta}</td><td>{m.window}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          <p style="margin-top:var(--s7)">
+            <a class="backlink" href={hrefFor(lang, '/projects')}>&larr; {tr('proj.back')}</a>
+          </p>
+        </div>
+
+        <nav class="toc" aria-labelledby="toc-h">
+          <h2 id="toc-h">{tr('sec.contents')}</h2>
+          <ol>
+            {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+            <li><a href="#measured">{tr('proj.measured')}</a></li>
+          </ol>
+        </nav>
       </div>
-
-      <p style="margin-top:var(--xl)">
-        <a class="backlink" href={hrefFor(lang, '/projects')}>&larr; {tr('proj.back')}</a>
-      </p>
     </article>
   </div>
 </Layout>

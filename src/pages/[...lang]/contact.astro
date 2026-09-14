@@ -1,6 +1,6 @@
 ---
 import Layout from '../../Layout.astro';
-import { CONTACT, langPaths, profileOf, t, type Lang } from '../../site';
+import { CONTACT, FALLBACK_SITE, langPaths, hrefFor, profileOf, t, type Lang } from '../../site';
 
 export const getStaticPaths = langPaths;
 type Props = { lang: Lang };
@@ -8,6 +8,7 @@ type Props = { lang: Lang };
 const { lang } = Astro.props;
 const p = profileOf(lang);
 const tr = t(lang);
+const site = Astro.site ?? FALLBACK_SITE;
 const key = CONTACT.web3formsKey.trim();
 ---
 <Layout
@@ -17,53 +18,73 @@ const key = CONTACT.web3formsKey.trim();
   description={p.contactIntro}
 >
   <div class="wrap">
-    <section class="band" style="max-width:640px">
-      <div class="band-head">
-        <p class="eyebrow">{tr('nav.contact')}</p>
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">{tr('nav.contact')}</p>
         <h1>{tr('cta.title')}</h1>
-        <p class="lede">{p.contactIntro}</p>
       </div>
+      <p class="lede" style="margin-bottom:var(--s6)">{p.contactIntro}</p>
 
-      {key ? (
-        <form action="https://api.web3forms.com/submit" method="POST" class="stack stack-lg">
-          <input type="hidden" name="access_key" value={key} />
-          <input type="hidden" name="subject" value={`Kontak baru dari website ${p.name}`} />
-          <input type="hidden" name="from_name" value={p.name} />
+      <div style="max-width:640px" class="stack stack-lg">
+        {key ? (
+          <form action="https://api.web3forms.com/submit" method="POST" class="stack stack-lg">
+            <input type="hidden" name="access_key" value={key} />
+            <input type="hidden" name="subject" value={`Kontak baru dari website ${p.name}`} />
+            <input type="hidden" name="from_name" value={p.name} />
+            <input type="hidden" name="redirect" value={new URL(hrefFor(lang, '/contact/success'), site).href} />
 
-          {/* Honeypot. Web3Forms menolak kiriman yang mengisi field ini. */}
-          <div class="hp" aria-hidden="true">
-            <label for="botcheck">Leave this empty</label>
-            <input id="botcheck" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
-          </div>
+            {/* Honeypot. Web3Forms menolak kiriman yang mengisi field ini. */}
+            <div class="hp" aria-hidden="true">
+              <label for="botcheck">Leave this empty</label>
+              <input id="botcheck" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
+            </div>
 
-          <div class="field">
-            <label for="name">{tr('form.name')} <span class="req" aria-hidden="true">*</span></label>
-            <input id="name" name="name" type="text" required autocomplete="name" maxlength="80" />
-          </div>
+            <div class="field">
+              <label for="name">{tr('form.name')} <span class="req" aria-hidden="true">*</span><span class="sr-only"> ({tr('form.required')})</span></label>
+              <input id="name" name="name" type="text" required autocomplete="name" maxlength="80" />
+            </div>
 
-          <div class="field">
-            <label for="email">{tr('form.email')} <span class="req" aria-hidden="true">*</span></label>
-            <input id="email" name="email" type="email" required autocomplete="email" maxlength="120" />
-          </div>
+            <div class="field">
+              <label for="email">{tr('form.email')} <span class="req" aria-hidden="true">*</span><span class="sr-only"> ({tr('form.required')})</span></label>
+              <input id="email" name="email" type="email" required autocomplete="email" maxlength="120" />
+            </div>
 
-          <div class="field">
-            <label for="message">{tr('form.message')} <span class="req" aria-hidden="true">*</span></label>
-            <textarea id="message" name="message" required minlength="20" maxlength="4000"
-              aria-describedby="message-hint"></textarea>
-            <p id="message-hint" class="hint">{tr('form.help')}</p>
-          </div>
+            <div class="field">
+              <label for="message">{tr('form.message')} <span class="req" aria-hidden="true">*</span><span class="sr-only"> ({tr('form.required')})</span></label>
+              <textarea id="message" name="message" required minlength="20" maxlength="4000"
+                aria-describedby="message-hint"></textarea>
+              <p id="message-hint" class="hint">
+                <span>{tr('form.help')}</span>
+                <span id="counter" class="tnum" aria-hidden="true">0 / 4000</span>
+              </p>
+            </div>
 
-          <p><button class="btn btn-primary" type="submit">{tr('form.send')}</button></p>
-        </form>
-      ) : (
-        <p class="notice">{tr('form.unconfigured')}</p>
-      )}
+            <p><button class="btn btn-primary" type="submit">{tr('form.send')}</button></p>
+            <p class="notice">{tr('form.expect')}</p>
+          </form>
+        ) : (
+          <p class="notice notice-warn">{tr('form.unconfigured')}</p>
+        )}
 
-      <ul class="linklist stack stack-sm" style="margin-top:var(--xl)">
-        {CONTACT.social.map((s) => (
-          <li><a href={s.url} rel="me noopener">{s.label}</a></li>
-        ))}
-      </ul>
+        <div>
+          <p class="eyebrow" style="margin-bottom:var(--s3)">{tr('form.alt')}</p>
+          <ul class="linklist">
+            {CONTACT.social.map((s) => <li><a href={s.url} rel="me noopener">{s.label}</a></li>)}
+          </ul>
+        </div>
+      </div>
     </section>
   </div>
+
+  <script is:inline>
+    (function () {
+      var box = document.getElementById('message');
+      var out = document.getElementById('counter');
+      if (!box || !out) return;
+      var max = box.getAttribute('maxlength') || 4000;
+      function tick() { out.textContent = box.value.length + ' / ' + max; }
+      box.addEventListener('input', tick);
+      tick();
+    })();
+  </script>
 </Layout>

@@ -1,7 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../Layout.astro';
-import { CONTACT, langPaths, hrefFor, profileOf, periodLabel, t, type Lang } from '../../site';
+import {
+  CONTACT, FALLBACK_SITE, langPaths, hrefFor, profileOf, periodLabel,
+  tenures, durationLabel, monthsBetween, t, type Lang,
+} from '../../site';
 
 export const getStaticPaths = langPaths;
 type Props = { lang: Lang };
@@ -9,10 +12,12 @@ type Props = { lang: Lang };
 const { lang } = Astro.props;
 const p = profileOf(lang);
 const tr = t(lang);
-const site = Astro.site ?? new URL('https://fantastic-couscous.pages.dev');
+const site = Astro.site ?? FALLBACK_SITE;
 
 const featured = (await getCollection('projects', (e) => e.data.lang === lang && e.data.featured))
   .sort((a, b) => a.data.order - b.data.order);
+
+const career = tenures(p.experience);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -21,10 +26,18 @@ const jsonLd = {
   jobTitle: p.headline,
   description: p.positioning,
   url: new URL(hrefFor(lang, '/'), site).href,
+  image: new URL(`/og/og-${lang}.png`, site).href,
   address: { '@type': 'PostalAddress', addressLocality: p.location },
   sameAs: CONTACT.social.map((s) => s.url),
-  knowsAbout: p.skills.flatMap((g) => g.items.map((i) => i.name)),
+  knowsAbout: p.disciplines,
+  worksFor: career.map((c) => ({ '@type': 'Organization', name: c.company })),
+  alumniOf: p.education
+    .filter((e) => e.kind === 'degree')
+    .map((e) => ({ '@type': 'EducationalOrganization', name: e.institution })),
 };
+
+const arrow =
+  '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M2 7h9M7.5 3.5 11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <Layout
   lang={lang}
@@ -33,109 +46,164 @@ const jsonLd = {
   description={p.positioning}
   jsonLd={jsonLd}
 >
-  <div class="wrap">
-    <!-- Hero: menjawab siapa / apa / buktinya dalam satu layar -->
-    <section class="hero stack stack-md">
-      <p class="eyebrow">{p.headline}</p>
-      <h1>{p.name}</h1>
-      <p class="positioning">{p.positioning}</p>
+  <!-- Hero: siapa, apa, dan bukti pertama — dalam satu layar ponsel -->
+  <section class="hero">
+    <div class="wrap stack stack-lg">
+      <ul class="chips" aria-label={lang === 'id' ? 'Bidang keahlian' : 'Disciplines'}>
+        {p.disciplines.map((d) => <li class="chip">{d}</li>)}
+      </ul>
+
+      <div>
+        <h1 class="hero-name">{p.name}</h1>
+        <p class="hero-positioning">{p.positioning}</p>
+      </div>
+
       <p class="meta-row">
         <span>{p.location}</span>
-        <span>{p.years}+ {lang === 'id' ? 'tahun pengalaman' : 'years experience'}</span>
-        <span>{tr('hero.available')}: {p.availability}</span>
+        <span class="tnum">{p.years}+ {tr('hero.experience')}</span>
+        <span>{career[0]?.company}</span>
       </p>
+
+      <p class="chips">
+        <span class="chip chip-live">
+          <span class="dot dot-pulse" aria-hidden="true"></span>
+          {p.availability}
+        </span>
+      </p>
+
       <div class="btn-row">
-        <a class="btn btn-primary" href={hrefFor(lang, '/projects')}>{tr('hero.caseStudies')}</a>
+        <a class="btn btn-primary" href={hrefFor(lang, '/projects')}>
+          {tr('hero.caseStudies')}<Fragment set:html={arrow} />
+        </a>
         <a class="btn btn-ghost" href={hrefFor(lang, '/cv')}>{tr('hero.downloadCv')}</a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="band" aria-labelledby="impact">
-      <div class="band-head">
-        <p class="eyebrow">01</p>
-        <h2 id="impact">{tr('sec.impact')}</h2>
+  <div class="wrap">
+    <!-- 01 — Angka yang bisa diverifikasi dari catatan karier, bukan klaim hasil -->
+    <section class="section" aria-labelledby="record">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">01</p>
+        <h2 id="record">{tr('sec.record')}</h2>
       </div>
-      <div class="metrics">
+      <div class="stat-grid">
         {p.highlights.map((h) => (
-          <div class="metric">
-            <span class="v">{h.value}</span>
-            <span class="k">{h.label}</span>
-            <span class="c">{h.context}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <section class="band" aria-labelledby="exp">
-      <div class="band-head">
-        <p class="eyebrow">02</p>
-        <h2 id="exp">{tr('sec.experience')}</h2>
-      </div>
-      <div class="roles">
-        {p.experience.map((r) => (
-          <article class="role-item">
-            <p class="role-when">{periodLabel(r.start, r.end, lang)}</p>
-            <h3>{r.title}</h3>
-            <p class="role-where">
-              {r.company}{r.industry ? ` · ${r.industry}` : ''} · {r.location}
-              {r.scope ? <><br /><span class="muted">{r.scope}</span></> : null}
-            </p>
-            <p class="muted">{r.summary}</p>
-            <ul>{r.achievements.map((a) => <li>{a}</li>)}</ul>
-            {r.tools.length > 0 && (
-              <p class="tags">{r.tools.map((tool) => <span class="tag">{tool}</span>)}</p>
-            )}
+          <article class="stat">
+            <span class="stat-v">{h.value}</span>
+            <span class="stat-k">{h.label}</span>
+            <span class="stat-c">{h.context}</span>
           </article>
         ))}
       </div>
     </section>
 
-    <section class="band" aria-labelledby="skills">
-      <div class="band-head">
-        <p class="eyebrow">03</p>
-        <h2 id="skills">{tr('sec.skills')}</h2>
+    <!-- 02 — Jalur karier sebagai satu rel, bukan lima kartu terpisah -->
+    <section class="section" aria-labelledby="career">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">02</p>
+        <h2 id="career">{tr('sec.experience')}</h2>
       </div>
-      <div class="skill-groups">
+
+      <div class="stack stack-lg">
+        {career.map((c) => (
+          <article class="tenure">
+            <header class="tenure-head">
+              <h3 class="tenure-name">{c.company}</h3>
+              <div class="tenure-facts">
+                {c.industry && <span class="chip">{c.industry}</span>}
+                <span class="chip tnum">{durationLabel(c.months, lang)}</span>
+                <span class="chip tnum">{c.roles.length} {tr('ui.roleCount')}</span>
+              </div>
+            </header>
+
+            <ol class="rail">
+              {c.roles.map((r) => (
+                <li class={`step${r.end === 'present' ? ' step-now' : ''}`}>
+                  <p class="step-when">
+                    <span>{periodLabel(r.start, r.end, lang)}</span>
+                    <span class="step-dur">{durationLabel(monthsBetween(r.start, r.end), lang)}</span>
+                    {r.end === 'present' && <span class="chip chip-live"><span class="dot" aria-hidden="true"></span>{tr('ui.current')}</span>}
+                  </p>
+                  <div class="step-body">
+                    <h4>{r.title}</h4>
+                    <p class="step-where">{r.location}{r.scope ? ` · ${r.scope}` : ''}</p>
+                    <p class="step-summary">{r.summary}</p>
+                    <ul class="step-bullets">{r.achievements.map((a) => <li>{a}</li>)}</ul>
+                    {r.tools.length > 0 && (
+                      <ul class="chips" aria-label={lang === 'id' ? 'Perkakas' : 'Tools'}>
+                        {r.tools.map((tool) => <li class="chip">{tool}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 03 — Kapabilitas dikelompokkan persis mengikuti pilar di hero -->
+    <section class="section" aria-labelledby="cap">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">03</p>
+        <h2 id="cap">{tr('sec.skills')}</h2>
+      </div>
+      <div class="cap-grid">
         {p.skills.map((g) => (
-          <div class="skill-group">
-            <h3>{g.domain}</h3>
-            <ul>
+          <article class="cap">
+            <div class="cap-head">
+              <h3>{g.domain}</h3>
+              {g.note && <p class="cap-note">{g.note}</p>}
+            </div>
+            <ul class="skills">
               {g.items.map((i) => (
-                <li><span>{i.name}</span><span>{tr(`level.${i.level}` as const)}</span></li>
+                <li class="skill">
+                  <span class="skill-name">{i.name}</span>
+                  <span class="meter" data-level={i.level} aria-hidden="true"><i></i><i></i><i></i></span>
+                  <span class="sr-only">{tr('ui.level')}: {tr(`level.${i.level}` as const)}</span>
+                </li>
               ))}
             </ul>
-          </div>
+          </article>
         ))}
       </div>
     </section>
 
     {featured.length > 0 && (
-      <section class="band" aria-labelledby="cases">
-        <div class="band-head">
-          <p class="eyebrow">04</p>
+      <section class="section" aria-labelledby="cases">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-n">04</p>
           <h2 id="cases">{tr('sec.featured')}</h2>
+          <a class="backlink" href={hrefFor(lang, '/projects')}>
+            {tr('proj.all')}<Fragment set:html={arrow} />
+          </a>
         </div>
         <div class="cards">
           {featured.map((c) => (
             <a class="card" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
-              <p class="result">{c.data.headline}</p>
+              <p class="card-metric">{c.data.headline}</p>
               <h3>{c.data.title}</h3>
               <p>{c.data.description}</p>
-              <p class="tags">{c.data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>
+              <ul class="chips">{c.data.tags.map((tag) => <li class="chip">{tag}</li>)}</ul>
+              <span class="card-go">{tr('proj.read')}<Fragment set:html={arrow} /></span>
             </a>
           ))}
         </div>
       </section>
     )}
 
-    <section class="band" aria-labelledby="cta">
-      <div class="band-head">
-        <p class="eyebrow">05</p>
+    <section class="section" aria-labelledby="cta">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-n">05</p>
         <h2 id="cta">{tr('cta.title')}</h2>
       </div>
       <p class="lede">{tr('cta.body')}</p>
-      <p class="btn-row" style="margin-top:var(--md)">
-        <a class="btn btn-primary" href={hrefFor(lang, '/contact')}>{tr('cta.button')}</a>
+      <p class="btn-row" style="margin-top:var(--s5)">
+        <a class="btn btn-primary" href={hrefFor(lang, '/contact')}>
+          {tr('cta.button')}<Fragment set:html={arrow} />
+        </a>
       </p>
     </section>
   </div>
