@@ -15,7 +15,7 @@ import raw from './data.json';
  * di dalam src/ — sumber kebenarannya tetap `site` di astro.config.mjs, dan
  * robots.txt kini dibangkitkan dari `Astro.site` (ADR-010).
  */
-export const FALLBACK_SITE = new URL('https://fantastic-couscous.pages.dev');
+export const FALLBACK_SITE = new URL('https://aditya-fauzi.pages.dev');
 
 /* ------------------------------------------------------------------ i18n -- */
 

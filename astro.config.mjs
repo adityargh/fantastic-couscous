@@ -5,7 +5,7 @@ import { defineConfig } from 'astro/config';
 // sendiri dengan kode yang jauh lebih kecil daripada paket setara.
 // Lihat ADR-009 di docs/04-decision-records.md.
 export default defineConfig({
-  site: 'https://fantastic-couscous.pages.dev',
+  site: 'https://aditya-fauzi.pages.dev',
   output: 'static',
   compressHTML: true,
   prefetch: false,

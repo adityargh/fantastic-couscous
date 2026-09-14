@@ -4,9 +4,9 @@ Resume digital bilingual (EN/ID) berupa situs statis. Ringan, mudah diakses, ber
 
 | | |
 | :--- | :--- |
-| **Status** | Konten nyata terpasang · `draft: true` menunggu verifikasi angka oleh pemilik |
+| **Status** | **Live** · `draft: false` · disetujui pemilik 14 Sep 2026 |
 | **Stack** | Astro 5 · TypeScript · CSS tulis tangan · **satu dependensi runtime** |
-| **Hosting** | Cloudflare Pages (free tier) |
+| **Hosting** | Cloudflare Pages (free tier) — `aditya-fauzi.pages.dev` |
 | **Bahasa** | English (default) + Bahasa Indonesia |
 | **Biaya** | Rp 0 / bulan |
 | **Halaman** | 21 · **beranda 10,6 KB gzip** · nol berkas CSS/JS terpisah · nol permintaan pihak ketiga |
@@ -24,18 +24,16 @@ pnpm og         # opsional: bangkitkan ulang public/og/*.png (butuh Chromium sis
 pnpm pdf        # opsional: hasilkan dist/cv/*.pdf (butuh Playwright)
 ```
 
-## Langkah berikutnya — satu blocker
-
-**Baca isinya, lalu set `"draft": false` di `src/data.json`.**
+## Status konten
 
 Fakta di situs ini — jabatan, perusahaan, tanggal, lokasi, pendidikan — berasal dari ekspor
-profil LinkedIn dan sudah terverifikasi. Yang belum: kalimat pencapaian ditulis dari *cakupan
-jabatan*, bukan dari angka hasil yang Anda laporkan. Daftar lengkap yang perlu Anda periksa ada
-di field `_verify` dalam `src/data.json`.
+profil LinkedIn dan sudah terverifikasi. Kalimat pencapaian ditulis dari *cakupan jabatan*,
+bukan dari angka hasil yang dilaporkan pemilik; pemilik menyetujui publikasinya pada
+14 Sep 2026. Daftar penyempurnaan yang masih terbuka ada di field `_verify` dalam
+`src/data.json` — itu backlog, bukan blocker.
 
-Selama `draft: true`, setiap halaman otomatis `noindex`, `robots.txt` menolak seluruh perayapan,
-dan banner peringatan tampil — sehingga konten yang belum diverifikasi tidak mungkin terindeks
-karena kelalaian.
+Untuk menarik situs dari indeks sewaktu-waktu: set `"draft": true`. Seluruh halaman akan
+kembali `noindex` dan `robots.txt` menolak seluruh perayapan.
 
 ## Struktur
 
@@ -104,8 +102,11 @@ Nol overflow horizontal terverifikasi otomatis pada 8 halaman × 6 lebar (320–
 | Production branch | `main` |
 | Node version | dari `.nvmrc` (22) |
 
+**Nama proyek Cloudflare harus `aditya-fauzi`** — subdomain `*.pages.dev` unik secara global,
+dan `fantastic-couscous.pages.dev` sudah dimiliki pihak lain (diperiksa 14 Sep 2026).
+
 Ganti domain = **2 suntingan**: `site` di `astro.config.mjs` dan `FALLBACK_SITE` di `src/site.ts`.
-`robots.txt` dan sitemap mengikuti otomatis.
+`robots.txt`, sitemap, canonical, hreflang, dan OG mengikuti otomatis.
 
 ## Form kontak
 

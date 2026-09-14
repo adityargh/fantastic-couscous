@@ -1,6 +1,6 @@
 {
-  "draft": true,
-  "_readme": "SUMBER KEBENARAN TUNGGAL. Satu berkas ini menghasilkan halaman web, CV cetak, JSON-LD, dan /resume.json. Fakta di sini berasal dari ekspor profil LinkedIn (September 2026): jabatan, perusahaan, tanggal, lokasi, pendidikan, dan top skills — semuanya terverifikasi. Kalimat pencapaian ditulis dari cakupan jabatan, BUKAN dari angka hasil yang dilaporkan pemilik. Lihat _verify di bawah, lalu set draft:false setelah diperiksa. Aturan yang ditegakkan mesin (src/site.ts): setiap achievement dan setiap highlight WAJIB memuat angka; skill tidak punya field persentase; tidak ada field untuk telepon/alamat/tanggal lahir.",
+  "draft": false,
+  "_readme": "SUMBER KEBENARAN TUNGGAL. Satu berkas ini menghasilkan halaman web, CV cetak, JSON-LD, dan /resume.json. Fakta di sini berasal dari ekspor profil LinkedIn (September 2026): jabatan, perusahaan, tanggal, lokasi, pendidikan, dan top skills — semuanya terverifikasi. Kalimat pencapaian ditulis dari cakupan jabatan, BUKAN dari angka hasil yang dilaporkan pemilik. Pemilik menyetujui publikasi pada 14 Sep 2026 (draft:false). _verify di bawah tetap menjadi daftar penyempurnaan, bukan blocker. Aturan yang ditegakkan mesin (src/site.ts): setiap achievement dan setiap highlight WAJIB memuat angka; skill tidak punya field persentase; tidak ada field untuk telepon/alamat/tanggal lahir.",
   "_verify": [
     "Tingkat skill (expert/proficient/familiar) adalah perkiraan — sesuaikan dengan penilaian Anda sendiri.",
     "Bullet pencapaian menggambarkan cakupan jabatan dan durasi yang terverifikasi. Ganti dengan hasil nyata Anda bila angkanya boleh publik.",
