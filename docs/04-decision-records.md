@@ -453,7 +453,13 @@ Diverifikasi: `SITE_URL=https://contoh.workers.dev pnpm build` mengubah canonica
 
 ## ADR-013 — Katalog enam proyek nyata dengan tangkapan antarmuka
 
-**Status:** Diterima · 15 Sep 2026
+**Status:** ⚠️ **Sebagian dibatalkan oleh ADR-014** · 15 Sep 2026
+
+> **Baca ini lebih dulu.** Keputusan *infrastruktur* di ADR ini tetap berlaku: skema
+> tepat-4-tangkapan, katalog bergambar, galeri, penjaga CI, dan aturan visualisasi.
+> Keputusan *konten*-nya batal — keenam studi kasus ditulis dari nama proyek, bukan
+> dari sistemnya, dan ditarik pada hari yang sama. Lihat ADR-014. Bagian §7 (CV
+> menjadi 2 halaman) ikut gugur: CV kembali 1 halaman setelah bullet karangan dicabut.
 
 **Keputusan:** Mengganti tiga studi kasus generik dengan **enam sistem nyata** yang dibangun pemilik di ASTRO, dan memberi setiap studi kasus **tepat empat tangkapan antarmuka** yang dibangkitkan sebagai **rekonstruksi berdata contoh** dari satu skrip nol-dependensi.
 
@@ -535,6 +541,69 @@ Batas CI tetap 1–2 halaman dan tetap ditegakkan. Menghapus pekerjaan nyata dem
 - ⚠️ CV PDF kini 2 halaman (lihat §7)
 - ⚠️ Menjalankan ulang `pnpm shots` menuntut Chromium sistem. Sama seperti `pnpm og` dan `pnpm pdf` — dan sama seperti keduanya, hasilnya di-commit sehingga build tetap nol-dependensi
 - ⚠️ Rekonstruksi adalah rekonstruksi. Ia menunjukkan keputusan tata letak dan pilihan indikator dengan jujur, tapi ia **bukan** tangkapan sistem produksi, dan halamannya mengatakan itu
+
+---
+
+## ADR-014 — Menarik enam studi kasus yang ditulis dari nama proyek
+
+**Status:** Diterima · 15 Sep 2026 · **Membatalkan sebagian ADR-013**
+
+**Keputusan:** Menghapus keenam studi kasus dan 24 tangkapan yang dibuat pada ADR-013, mengosongkan katalog, dan menahannya kosong sampai kontennya bisa ditulis dari sistem yang sebenarnya.
+
+**Konteks:** ADR-013 memasang enam nama proyek nyata milik pemilik — `antrian-inbound-frozen`, `ex-analysis-system`, `occupancy-monitoring-alert`, `outbound-operations-tower`, `relabel-productivity`, dan AVAS — lalu mengisi keenamnya dengan narasi yang **disusun dari nama proyeknya saja**. Tidak ada satu pun repositori yang dibaca, karena tidak ada yang bisa dijangkau.
+
+Pemilik menolak hasilnya. Kesalahannya bukan pada detail, melainkan pada **jenisnya**: keenam sistem itu adalah aplikasi web di organisasi GitHub `FIT-Developers-Team` — Supabase, PGlite, Apache Superset, edge function — sementara yang ditulis adalah program perbaikan proses gudang yang dijalankan seorang supervisor. Dua hal yang sama sekali berbeda, dengan nama yang sama.
+
+Yang membuatnya lebih buruk daripada sekadar salah: ia **masuk akal**. Prosa yang koheren, indikator yang wajar, tangkapan antarmuka yang rapi — semuanya menambah kredibilitas pada klaim yang tidak punya sumber. Kesalahan yang terlihat seperti kesalahan akan diperbaiki; kesalahan yang terlihat seperti hasil kerja akan diterbitkan.
+
+**Kenapa sumbernya tidak bisa dijangkau:**
+
+| Jalur | Hasil |
+| :--- | :--- |
+| `add_repo` | Ditolak — *cross-tier adds not supported*; sesi terikat ke owner `adityargh` |
+| `git ls-remote` anonim | Keenam repositori privat |
+| GitHub MCP | Dibatasi ke `adityargh/fantastic-couscous` |
+| `list_repos` | Koneksi GitHub workspace tidak menjangkau org `FIT-Developers-Team` |
+
+Sesi yang dulu mengerjakan repositori itu berjalan lewat Claude Code CLI di mesin pemilik dengan checkout lokal. Sesi cloud ini tidak punya jalan ke sana, dan tidak ada jalan pintas yang jujur.
+
+**Alternatif yang ditolak:**
+
+| Opsi | Alasan penolakan |
+| :--- | :--- |
+| **Perbaiki detailnya saja** | Yang salah adalah kerangkanya. Menambal angka pada cerita yang salah jenis menghasilkan cerita salah yang lebih meyakinkan |
+| **Biarkan sampai data asli datang** | Situs sudah live dan terindeks. Setiap jam ia menerbitkan narasi karangan atas nama proyek nyata pemilik |
+| **`draft: true` seluruh situs** | Menghukum sembilan halaman yang isinya benar demi satu halaman yang tidak. Rekam jejak karier, CV, dan halaman tentang semuanya terverifikasi |
+| **Ganti dengan "coming soon" generik** | Sama saja dengan kosong, tapi tanpa memberi pembaca alasan untuk kembali |
+
+**Yang ditarik dan yang tinggal.** Pemisahannya mengikuti satu garis: **data karangan dibuang, mesin yang sudah terbukti disimpan.**
+
+| Ditarik | Tinggal |
+| :--- | :--- |
+| 12 berkas Markdown studi kasus | Skema `src/content.config.ts` — kontrak untuk pengisian ulang |
+| 24 PNG di `public/shots/` | Galeri 4 panel di `CaseStudy.astro`, katalog bergambar, seluruh CSS-nya |
+| `scripts/shots.mjs` + `lib/ui.mjs` + `lib/shell.mjs` — definisi panel dan primitif yang dirancang mengelilingi panel karangan itu | `scripts/lib/shoot.mjs` — pemotret Chromium, dipakai `og.mjs`, bebas konten |
+| 4 bullet pencapaian di `src/data.json` yang menyebut sistem-sistem itu | `scripts/check-shots.mjs`, penjaga `<img>` tanpa `alt`, header cache `/shots/*` |
+
+Primitif UI dan definisi panel **tidak disimpan sebagai kode mati**. Riwayat git adalah arsipnya: semuanya utuh di commit `a5c9e40` dan bisa diambil kembali kapan pun rekonstruksi memang dibutuhkan. Menyimpan 400 baris yang dirancang mengelilingi konten yang sudah dihapus adalah biaya pemeliharaan tanpa pembaca.
+
+**Katalog kosong dirancang, bukan dibiarkan.** Halaman `/projects` menampilkan keadaan kosong yang menjelaskan dan mengarahkan pembaca ke CV serta halaman tentang. Halaman putih adalah kegagalan; keadaan kosong adalah desain.
+
+**Jebakan yang ditemukan saat menarik konten.** Menghapus berkas Markdown **tidak** menghapus halamannya dari build. Cache content layer di `.astro/collections/` tetap menyajikan entri yang berkasnya sudah tidak ada — `astro build` melaporkan 27 halaman dengan penuh percaya diri, termasuk 12 halaman studi kasus yang sumbernya sudah dihapus, bahkan setelah `dist/` dikosongkan. Baru setelah `.astro/` ikut dihapus hasilnya jatuh ke 15 halaman yang benar.
+
+CI tidak terdampak (`actions/checkout` selalu bersih, dan `.astro/` ada di `.gitignore`), tetapi **verifikasi lokal bisa lulus di atas konten yang sudah dihapus**. Pemeriksaan lokal setelah menghapus konten wajib didahului `rm -rf .astro dist`.
+
+**Konsekuensi:**
+- ✅ Nol klaim karangan diterbitkan atas nama proyek nyata pemilik
+- ✅ Situs tetap live dan terindeks; sembilan halaman yang isinya terverifikasi tidak terganggu
+- ✅ CV PDF kembali **1 halaman** — hasil ADR-011 pulih dengan sendirinya begitu bullet karangan dicabut, sehingga ADR-013 §7 gugur
+- ✅ Seluruh infrastruktur katalog lulus pada nol studi kasus; `check-shots.mjs` melaporkan kosong dengan berisik, bukan diam
+- ✅ [`docs/05-case-study-source-brief.md`](05-case-study-source-brief.md) menyatakan persis apa yang dibutuhkan per proyek, lengkap dengan prompt siap-tempel
+- ⚠️ Katalog kosong sampai pemilik mengumpulkan datanya. Itu keadaan yang benar, bukan keadaan yang baik
+- ⚠️ Dua belas URL studi kasus kini 404. Semuanya hidup kurang dari satu jam dan tidak pernah masuk indeks pencarian, jadi tidak ada redirect yang dipasang
+- ⚠️ Tangkapan asli menuntut aplikasinya dijalankan dengan data seed. Kalau tidak bisa, rekonstruksi kembali menjadi jalannya — dan `reconstructed: true` wajib menyertainya
+
+**Aturan yang diambil dari sini.** Nama proyek bukan sumber. Kalau sumbernya tidak bisa dijangkau, yang benar adalah **mengatakan bahwa ia tidak bisa dijangkau**, bukan mengisi kekosongannya dengan sesuatu yang bentuknya meyakinkan.
 
 ---
 

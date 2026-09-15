@@ -212,7 +212,10 @@ const arrow =
 
     <section class="section" aria-labelledby="cta">
       <div class="section-head">
-        <p class="eyebrow eyebrow-n">05</p>
+        {/* Nomor seksi mengikuti isi halaman: tanpa studi kasus pilihan, seksi
+            ini adalah yang keempat. Angka yang melompat 03 -> 05 adalah cacat
+            yang terlihat pembaca. */}
+        <p class="eyebrow eyebrow-n">{featured.length > 0 ? '05' : '04'}</p>
         <h2 id="cta">{tr('cta.title')}</h2>
       </div>
       <p class="lede">{tr('cta.body')}</p>

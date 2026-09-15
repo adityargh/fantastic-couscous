@@ -30,15 +30,28 @@ const arrow =
       <div class="section-head">
         <p class="eyebrow eyebrow-n">{tr('nav.projects')}</p>
         <h1>{tr('proj.all')}</h1>
-        <p class="eyebrow tnum">{cases.length} {tr('proj.count')}</p>
+        {cases.length > 0 && <p class="eyebrow tnum">{cases.length} {tr('proj.count')}</p>}
       </div>
-      <p class="lede">{tr('proj.catalogLede')}</p>
+      {cases.length > 0 && <p class="lede">{tr('proj.catalogLede')}</p>}
 
       {/* Pemberitahuan rekonstruksi berdiri SEKALI di kepala katalog, bukan
           diulang pada setiap kartu — dan setiap gambar juga membawa penandanya
           sendiri di dalam bingkai. */}
       {cases.some((c) => c.data.reconstructed) && (
         <p class="notice notice-thin">{tr('proj.reconstructed')}</p>
+      )}
+
+      {/* Keadaan kosong adalah keadaan yang SAH di sini (ADR-014), jadi ia
+          dirancang, bukan dibiarkan jadi halaman putih. */}
+      {cases.length === 0 && (
+        <div class="empty">
+          <h2>{tr('proj.emptyTitle')}</h2>
+          <p>{tr('proj.emptyBody')}</p>
+          <p class="btn-row">
+            <a class="btn btn-primary" href={hrefFor(lang, '/cv')}>{tr('hero.downloadCv')}<Fragment set:html={arrow} /></a>
+            <a class="btn btn-ghost" href={hrefFor(lang, '/about')}>{tr('nav.about')}</a>
+          </p>
+        </div>
       )}
 
       <div class="pcards">

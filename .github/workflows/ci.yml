@@ -30,12 +30,10 @@ jobs:
 
       - name: Pastikan setiap halaman benar-benar ter-generate
         run: |
-          slugs="antrian-inbound-frozen avas ex-analysis-system \
-                 occupancy-monitoring-alert outbound-operations-tower relabel-productivity"
-          cases=""
-          for s in $slugs; do cases="$cases projects/$s/index.html id/projects/$s/index.html"; done
+          # Halaman studi kasus TIDAK didaftar di sini: katalog sengaja kosong
+          # (ADR-014) dan jumlahnya akan berubah saat diisi ulang. Kelengkapannya
+          # dijaga scripts/check-shots.mjs, yang membaca daftar dari frontmatter.
           for f in index.html about/index.html projects/index.html \
-                   $cases \
                    contact/index.html contact/success/index.html contact/error/index.html \
                    cv/index.html \
                    id/index.html id/about/index.html id/projects/index.html \

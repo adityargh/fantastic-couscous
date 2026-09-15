@@ -63,4 +63,11 @@ if (fail.length) {
   for (const f of fail) console.error('  • ' + f);
   process.exit(1);
 }
-console.log(`Tangkapan konsisten: ${bySlug.size} studi kasus × 4 = ${referenced.size} berkas.`);
+if (bySlug.size === 0) {
+  // Nol studi kasus adalah keadaan TRANSISI yang sah (ADR-014), bukan galat —
+  // tapi ia tidak boleh lewat tanpa suara, karena katalog kosong itu sementara.
+  console.log('Katalog studi kasus KOSONG — tidak ada yang diperiksa.');
+  console.log('Isi ulang mengikuti docs/05-case-study-source-brief.md.');
+} else {
+  console.log(`Tangkapan konsisten: ${bySlug.size} studi kasus × 4 = ${referenced.size} berkas.`);
+}

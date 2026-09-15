@@ -248,6 +248,7 @@ type Key =
   | 'proj.interface' | 'proj.interfaceHint' | 'proj.reconstructed'
   | 'proj.fullSize' | 'proj.screens' | 'proj.screen' | 'proj.system'
   | 'proj.catalogLede' | 'proj.openShot'
+  | 'proj.emptyTitle' | 'proj.emptyBody'
   | 'cv.print' | 'cv.hint' | 'cv.title' | 'cv.profile' | 'cv.contact'
   | 'form.name' | 'form.email' | 'form.message' | 'form.send' | 'form.required'
   | 'form.help' | 'form.unconfigured' | 'form.counter' | 'form.expect' | 'form.alt'
@@ -283,7 +284,9 @@ export const UI: Record<Lang, Record<Key, string>> = {
     'proj.interfaceHint': 'The four views that carry the work, in the order someone on shift moves through them.',
     'proj.reconstructed': 'Interface reconstruction. The original systems are internal to the operator and cannot be published, so the layouts are rebuilt here with sample data — no real people, suppliers or figures appear in them.',
     'proj.fullSize': 'Open full size', 'proj.openShot': 'Open full size in a new tab:',
-    'proj.catalogLede': 'Six operating systems I built at ASTRO — written as decisions and their consequences, not as a list of duties. Each one carries four views of the interface behind it.',
+    'proj.catalogLede': 'Operating systems I built at ASTRO — written as decisions and their consequences, not as a list of duties. Each one carries four views of the interface behind it.',
+    'proj.emptyTitle': 'Case studies in progress',
+    'proj.emptyBody': 'Write-ups of the operations systems I built at ASTRO are being prepared from the systems themselves rather than from memory. Until they are ready, the career record and the CV carry the verified detail.',
     'cv.print': 'Save as PDF', 'cv.title': 'Curriculum vitae',
     'cv.profile': 'Profile', 'cv.contact': 'Contact',
     'cv.hint': 'Formatted for A4. Use Save as PDF for a text-based file that ATS parsers can read.',
@@ -336,7 +339,9 @@ export const UI: Record<Lang, Record<Key, string>> = {
     'proj.interfaceHint': 'Empat tampilan yang memikul pekerjaannya, dalam urutan seseorang di shift melewatinya.',
     'proj.reconstructed': 'Rekonstruksi antarmuka. Sistem aslinya internal milik perusahaan dan tidak boleh dipublikasikan, jadi tata letaknya dibangun ulang di sini dengan data contoh — tidak ada nama orang, pemasok, atau angka yang nyata di dalamnya.',
     'proj.fullSize': 'Buka ukuran penuh', 'proj.openShot': 'Buka ukuran penuh di tab baru:',
-    'proj.catalogLede': 'Enam sistem operasional yang saya bangun di ASTRO — ditulis sebagai keputusan dan konsekuensinya, bukan sebagai daftar tugas. Masing-masing membawa empat tampilan antarmuka di baliknya.',
+    'proj.catalogLede': 'Sistem operasional yang saya bangun di ASTRO — ditulis sebagai keputusan dan konsekuensinya, bukan sebagai daftar tugas. Masing-masing membawa empat tampilan antarmuka di baliknya.',
+    'proj.emptyTitle': 'Studi kasus sedang disiapkan',
+    'proj.emptyBody': 'Tulisan tentang sistem operasional yang saya bangun di ASTRO sedang disiapkan langsung dari sistemnya, bukan dari ingatan. Sementara itu, rekam jejak karier dan CV memuat detail yang sudah terverifikasi.',
     'cv.print': 'Simpan sebagai PDF', 'cv.title': 'Daftar riwayat hidup',
     'cv.profile': 'Profil', 'cv.contact': 'Kontak',
     'cv.hint': 'Diformat untuk A4. Gunakan Simpan sebagai PDF agar menghasilkan berkas berbasis teks yang terbaca ATS.',

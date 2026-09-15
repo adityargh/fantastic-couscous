@@ -1,0 +1,10 @@
+Direktori studi kasus — SENGAJA KOSONG.
+
+Enam studi kasus sebelumnya ditarik pada 15 Sep 2026 karena isinya ditulis dari
+nama proyek, bukan dari sistem yang sebenarnya (ADR-014). Skema, katalog,
+galeri, dan pipeline tangkapan tetap ada dan menunggu konten yang benar.
+
+Cara mengisi ulang: docs/05-case-study-source-brief.md
+
+JANGAN menaruh berkas .md selain studi kasus di sini — loader mencocokkan
+**/*.md dan akan memvalidasinya terhadap skema di src/content.config.ts.
