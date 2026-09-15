@@ -9,7 +9,7 @@ Resume digital bilingual (EN/ID) berupa situs statis. Ringan, mudah diakses, ber
 | **Hosting** | Cloudflare Workers Static Assets (free tier) — lihat ADR-012 |
 | **Bahasa** | English (default) + Bahasa Indonesia |
 | **Biaya** | Rp 0 / bulan |
-| **Halaman** | 21 · **beranda 10,6 KB gzip** · nol berkas CSS/JS terpisah · nol permintaan pihak ketiga |
+| **Halaman** | 26 · **6 studi kasus × 4 tangkapan antarmuka** · nol berkas CSS/JS terpisah · nol permintaan pihak ketiga |
 
 ---
 
@@ -21,7 +21,9 @@ pnpm dev        # http://localhost:4321
 pnpm build      # astro check + build  ->  dist/
 pnpm preview    # pratinjau hasil build
 pnpm og         # opsional: bangkitkan ulang public/og/*.png (butuh Chromium sistem)
+pnpm shots      # opsional: bangkitkan ulang 24 tangkapan di public/shots/ (Chromium sistem)
 pnpm pdf        # bangkitkan public/cv/*.pdf (butuh Chromium sistem, nol dep npm)
+pnpm check:shots # verifikasi tangkapan cocok dengan frontmatter (dipakai CI)
 ```
 
 ## Status konten
@@ -31,6 +33,16 @@ profil LinkedIn dan sudah terverifikasi. Kalimat pencapaian ditulis dari *cakupa
 bukan dari angka hasil yang dilaporkan pemilik; pemilik menyetujui publikasinya pada
 14 Sep 2026. Daftar penyempurnaan yang masih terbuka ada di field `_verify` dalam
 `src/data.json` — itu backlog, bukan blocker.
+
+Enam studi kasus merujuk sistem operasional nyata yang dibangun pemilik di ASTRO:
+`outbound-operations-tower`, `occupancy-monitoring-alert`, `ex-analysis-system`,
+`antrian-inbound-frozen`, `relabel-productivity`, dan **AVAS** (Astro Validation Absence System).
+
+**Tangkapan antarmuka di `public/shots/` adalah rekonstruksi, bukan tangkapan sistem asli.**
+Sistem aslinya internal milik perusahaan dan tidak boleh dipublikasikan, jadi tata letaknya
+dibangun ulang dengan data contoh — tidak ada nama orang, pemasok, atau angka nyata di
+dalamnya. Setiap bingkai membawa penanda `Reconstruction · sample data` **di dalam gambar**,
+karena gambar beredar terpisah dari halamannya. Lihat ADR-013.
 
 Untuk menarik situs dari indeks sewaktu-waktu: set `"draft": true`. Seluruh halaman akan
 kembali `noindex` dan `robots.txt` menolak seluruh perayapan.
@@ -56,9 +68,16 @@ src/
     ├── sitemap.xml.ts   ← sitemap + hreflang
     ├── robots.txt.ts    ← dibangkitkan, mengikuti `site` dan flag draft
     └── 404.astro
+public/
+└── shots/<slug>/        ← 4 tangkapan antarmuka per studi kasus (rekonstruksi)
 scripts/
+├── lib/shoot.mjs        ← pemotret Chromium bersama (dipakai og.mjs + shots.mjs)
+├── lib/ui.mjs           ← primitif antarmuka + palet visualisasi tervalidasi
+├── lib/shell.mjs        ← cangkang aplikasi (bilah atas, tab, stylesheet)
 ├── og.mjs               ← OG image via Chromium sistem, nol dependensi npm
-└── pdf.mjs              ← CV PDF 1 halaman, juga nol dependensi npm
+├── shots.mjs            ← 24 tangkapan antarmuka, dijalankan manual
+├── check-shots.mjs      ← penjaga: frontmatter ↔ berkas tidak boleh menyimpang
+└── pdf.mjs              ← CV PDF A4, juga nol dependensi npm
 ```
 
 Satu berkas `[...lang]/*.astro` melayani kedua bahasa. Rute studi kasus terpaksa eksplisit per
@@ -75,6 +94,8 @@ Build **gagal**, bukan sekadar memperingatkan, bila:
 | Tidak ada persentase pada skill (skill bar = sinyal palsu) | `.strict()` menolak field tak dikenal |
 | Tidak ada nomor telepon / alamat / tanggal lahir | `.strict()` — tidak ada field-nya sama sekali |
 | Studi kasus menyebut indikator yang diukur (2–5) | `src/content.config.ts` |
+| Studi kasus punya **tepat 4** tangkapan, masing-masing ber-`alt` dan berketerangan | `src/content.config.ts` |
+| Status rekonstruksi dinyatakan eksplisit (tanpa nilai bawaan) | `src/content.config.ts` |
 | Deskripsi studi kasus ≤ 165 karakter | `src/content.config.ts` |
 | Seluruh 26 halaman & aset benar-benar ter-generate | `.github/workflows/ci.yml` |
 | Jumlah halaman EN = jumlah halaman ID | `.github/workflows/ci.yml` |
@@ -82,6 +103,8 @@ Build **gagal**, bukan sekadar memperingatkan, bila:
 | PDF CV tidak basi terhadap `src/data.json` | `.github/workflows/ci.yml` + `cv.manifest.json` |
 | CV tetap 1–2 halaman | `.github/workflows/ci.yml` |
 | Nol nomor telepon / alamat rumah di keluaran | `.github/workflows/ci.yml` |
+| Tangkapan lengkap, tidak yatim, dan sama antara EN dan ID | `scripts/check-shots.mjs` |
+| Tidak ada `<img>` tanpa `alt` | `.github/workflows/ci.yml` |
 
 ## Desain
 
@@ -92,12 +115,14 @@ dengan presisi, angka, dan standar tertulis, jadi antarmukanya terasa seperti pa
 - **Meter skill ordinal 3 langkah**, bukan bar persentase (presisi semu)
 - **Angka tabular** di seluruh situs — digit tidak bergoyang antar baris
 - **Toggle tema 3 status**: ikut sistem → terang → gelap
+- **Katalog proyek bergambar**: sampul 16:10 ber-`width`/`height` → nol pergeseran tata letak, `loading="lazy"` → beranda tetap ringan
+- **Galeri antarmuka** 4 panel per studi kasus; perbesaran memakai penampil gambar bawaan peramban, bukan lightbox JavaScript (ADR-013 §4)
 - Nol web font, nol gambar di jalur kritis, kisi hero murni CSS
 
 **Terverifikasi otomatis, bukan diklaim:**
 - Nol overflow horizontal — 10 halaman × 6 lebar (320–1024 px)
 - Nol kegagalan WCAG AA — 8 halaman × 2 tema (kontras, urutan heading, nama aksesibel, target sentuh)
-- CV PDF 1 halaman A4, teks dapat diseleksi (ramah ATS)
+- CV PDF A4 2 halaman, teks dapat diseleksi (ramah ATS) — batas 1–2 halaman ditegakkan CI (ADR-013 §7)
 
 ## Deploy — Cloudflare Workers (Static Assets)
 

@@ -146,6 +146,19 @@ export type Profile = z.infer<typeof profileSchema>;
 export type Role = Profile['experience'][number];
 export const profileOf = (lang: Lang): Profile => DATA[lang];
 
+/* --------------------------------------------------- tangkapan antarmuka -- */
+
+/**
+ * Seluruh tangkapan dibangkitkan pada ukuran yang SAMA (scripts/shots.mjs),
+ * sehingga setiap <img> bisa membawa width/height — nol pergeseran tata letak
+ * saat gambar masuk, dan rasio bingkainya seragam di seluruh katalog.
+ */
+export const SHOT_W = 1280;
+export const SHOT_H = 800;
+
+/** URL publik sebuah tangkapan. Satu-satunya tempat jalur ini dibentuk. */
+export const shotSrc = (slug: string, file: string) => `/shots/${slug}/${file}`;
+
 /* ------------------------------------------------------------------ rute -- */
 
 /** Membangun URL untuk sebuah halaman dalam bahasa tertentu. */
@@ -232,6 +245,9 @@ type Key =
   | 'proj.all' | 'proj.result' | 'proj.role' | 'proj.period' | 'proj.metrics'
   | 'proj.before' | 'proj.after' | 'proj.delta' | 'proj.window' | 'proj.back'
   | 'proj.measured' | 'proj.measuredHint' | 'proj.read' | 'proj.count'
+  | 'proj.interface' | 'proj.interfaceHint' | 'proj.reconstructed'
+  | 'proj.fullSize' | 'proj.screens' | 'proj.screen' | 'proj.system'
+  | 'proj.catalogLede' | 'proj.openShot'
   | 'cv.print' | 'cv.hint' | 'cv.title' | 'cv.profile' | 'cv.contact'
   | 'form.name' | 'form.email' | 'form.message' | 'form.send' | 'form.required'
   | 'form.help' | 'form.unconfigured' | 'form.counter' | 'form.expect' | 'form.alt'
@@ -262,6 +278,12 @@ export const UI: Record<Lang, Record<Key, string>> = {
     'proj.measured': 'What I measured',
     'proj.measuredHint': 'The indicators this work was steered by, day to day.',
     'proj.read': 'Read case study', 'proj.count': 'case studies',
+    'proj.interface': 'Interface', 'proj.screens': 'screens', 'proj.screen': 'Screen',
+    'proj.system': 'System',
+    'proj.interfaceHint': 'The four views that carry the work, in the order someone on shift moves through them.',
+    'proj.reconstructed': 'Interface reconstruction. The original systems are internal to the operator and cannot be published, so the layouts are rebuilt here with sample data — no real people, suppliers or figures appear in them.',
+    'proj.fullSize': 'Open full size', 'proj.openShot': 'Open full size in a new tab:',
+    'proj.catalogLede': 'Six operating systems I built at ASTRO — written as decisions and their consequences, not as a list of duties. Each one carries four views of the interface behind it.',
     'cv.print': 'Save as PDF', 'cv.title': 'Curriculum vitae',
     'cv.profile': 'Profile', 'cv.contact': 'Contact',
     'cv.hint': 'Formatted for A4. Use Save as PDF for a text-based file that ATS parsers can read.',
@@ -309,6 +331,12 @@ export const UI: Record<Lang, Record<Key, string>> = {
     'proj.measured': 'Yang saya ukur',
     'proj.measuredHint': 'Indikator yang menjadi kemudi pekerjaan ini, hari demi hari.',
     'proj.read': 'Baca studi kasus', 'proj.count': 'studi kasus',
+    'proj.interface': 'Antarmuka', 'proj.screens': 'tampilan', 'proj.screen': 'Tampilan',
+    'proj.system': 'Sistem',
+    'proj.interfaceHint': 'Empat tampilan yang memikul pekerjaannya, dalam urutan seseorang di shift melewatinya.',
+    'proj.reconstructed': 'Rekonstruksi antarmuka. Sistem aslinya internal milik perusahaan dan tidak boleh dipublikasikan, jadi tata letaknya dibangun ulang di sini dengan data contoh — tidak ada nama orang, pemasok, atau angka yang nyata di dalamnya.',
+    'proj.fullSize': 'Buka ukuran penuh', 'proj.openShot': 'Buka ukuran penuh di tab baru:',
+    'proj.catalogLede': 'Enam sistem operasional yang saya bangun di ASTRO — ditulis sebagai keputusan dan konsekuensinya, bukan sebagai daftar tugas. Masing-masing membawa empat tampilan antarmuka di baliknya.',
     'cv.print': 'Simpan sebagai PDF', 'cv.title': 'Daftar riwayat hidup',
     'cv.profile': 'Profil', 'cv.contact': 'Kontak',
     'cv.hint': 'Diformat untuk A4. Gunakan Simpan sebagai PDF agar menghasilkan berkas berbasis teks yang terbaca ATS.',

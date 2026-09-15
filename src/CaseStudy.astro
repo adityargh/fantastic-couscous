@@ -1,7 +1,9 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import Layout from './Layout.astro';
-import { FALLBACK_SITE, hrefFor, profileOf, t, type Lang } from './site';
+import {
+  FALLBACK_SITE, hrefFor, profileOf, shotSrc, SHOT_W, SHOT_H, t, type Lang,
+} from './site';
 
 interface Props { entry: CollectionEntry<'projects'>; lang: Lang }
 const { entry, lang } = Astro.props;
@@ -22,8 +24,13 @@ const jsonLd = {
   keywords: d.tags.join(', '),
   author: { '@type': 'Person', name: p.name, jobTitle: p.headline },
   url: new URL(hrefFor(lang, `/projects/${d.slug}`), site).href,
-  image: new URL(`/og/og-${lang}.png`, site).href,
+  // Gambar utama artikel adalah tangkapan pertamanya, bukan kartu OG generik —
+  // pratinjau tautan jadi menunjukkan sistem yang dibicarakan.
+  image: new URL(shotSrc(d.slug, d.shots[0].file), site).href,
 };
+
+const expand =
+  '<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 2H2v4M10 14h4v-4M14 6V2h-4M2 10v4h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <Layout
   lang={lang}
@@ -39,13 +46,17 @@ const jsonLd = {
         <ul class="chips">{d.tags.map((tag) => <li class="chip chip-brand">{tag}</li>)}</ul>
       </div>
 
-      <h1 style="max-width:20ch">{d.title}</h1>
+      <h1 style="max-width:26ch">{d.title}</h1>
       <p class="lede" style="margin-block:var(--s4) var(--s6)">{d.description}</p>
 
       <div class="case-facts" style="margin-bottom:var(--s7)">
         <div class="case-fact">
           <span class="eyebrow">{tr('proj.result')}</span>
           <strong>{d.headline}</strong>
+        </div>
+        <div class="case-fact">
+          <span class="eyebrow">{tr('proj.system')}</span>
+          <strong>{d.system}</strong>
         </div>
         <div class="case-fact">
           <span class="eyebrow">{tr('proj.role')}</span>
@@ -56,6 +67,48 @@ const jsonLd = {
           <strong class="tnum">{d.period}</strong>
         </div>
       </div>
+
+      {/* Galeri berdiri di luar kolom prosa: tangkapan 1280 px pantas mendapat
+          lebar penuh, dan menyisipkannya di tengah teks akan memotong alur baca. */}
+      <section class="gallery" aria-labelledby="interface">
+        <div class="gallery-head">
+          <h2 id="interface">{tr('proj.interface')}</h2>
+          <p class="muted">{tr('proj.interfaceHint')}</p>
+        </div>
+
+        {d.reconstructed && <p class="notice notice-thin">{tr('proj.reconstructed')}</p>}
+
+        <div class="shots">
+          {d.shots.map((s, i) => (
+            <figure class="shot">
+              {/* Tautan ke berkas PNG-nya sendiri: pembesaran bawaan peramban,
+                  dapat di-zoom, dapat dibuka di tab baru, dan tetap bekerja
+                  tanpa satu baris JavaScript pun. */}
+              <a class="shot-frame" href={shotSrc(d.slug, s.file)} target="_blank" rel="noopener">
+                <img
+                  src={shotSrc(d.slug, s.file)}
+                  width={SHOT_W}
+                  height={SHOT_H}
+                  loading="lazy"
+                  decoding="async"
+                  alt={s.alt}
+                />
+                <span class="shot-zoom" aria-hidden="true">
+                  <Fragment set:html={expand} />
+                </span>
+                <span class="sr-only"> — {tr('proj.openShot')} {s.title}</span>
+              </a>
+              <figcaption>
+                <span class="shot-n tnum">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <b>{s.title}</b>
+                  {s.caption}
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
 
       <div class="case-layout">
         <div class="prose">
@@ -102,6 +155,7 @@ const jsonLd = {
         <nav class="toc" aria-labelledby="toc-h">
           <h2 id="toc-h">{tr('sec.contents')}</h2>
           <ol>
+            <li><a href="#interface">{tr('proj.interface')}</a></li>
             {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
             <li><a href="#measured">{tr('proj.measured')}</a></li>
           </ol>

@@ -1,7 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../../Layout.astro';
-import { langPaths, hrefFor, profileOf, t, type Lang } from '../../../site';
+import {
+  langPaths, hrefFor, profileOf, shotSrc, SHOT_W, SHOT_H, t, type Lang,
+} from '../../../site';
 
 export const getStaticPaths = langPaths;
 type Props = { lang: Lang };
@@ -20,8 +22,8 @@ const arrow =
   path="/projects"
   title={`${tr('nav.projects')} — ${p.name}`}
   description={lang === 'id'
-    ? `Studi kasus operasional ${p.name}: masalah, pendekatan, indikator yang diukur, dan apa yang dipelajari.`
-    : `Operations case studies by ${p.name}: the problem, the approach, the indicators measured, and what was learned.`}
+    ? `Studi kasus operasional ${p.name}: masalah, pendekatan, indikator yang diukur, dan tampilan antarmuka sistemnya.`
+    : `Operations case studies by ${p.name}: the problem, the approach, the indicators measured, and the interface behind each system.`}
 >
   <div class="wrap">
     <section class="section">
@@ -30,20 +32,42 @@ const arrow =
         <h1>{tr('proj.all')}</h1>
         <p class="eyebrow tnum">{cases.length} {tr('proj.count')}</p>
       </div>
-      <p class="lede" style="margin-bottom:var(--s6)">
-        {lang === 'id'
-          ? 'Tiga sistem operasional yang saya bangun di ASTRO — ditulis sebagai keputusan dan konsekuensinya, bukan sebagai daftar tugas.'
-          : 'Three operating systems I built at ASTRO — written as decisions and their consequences, not as a list of duties.'}
-      </p>
-      <div class="cards">
+      <p class="lede">{tr('proj.catalogLede')}</p>
+
+      {/* Pemberitahuan rekonstruksi berdiri SEKALI di kepala katalog, bukan
+          diulang pada setiap kartu — dan setiap gambar juga membawa penandanya
+          sendiri di dalam bingkai. */}
+      {cases.some((c) => c.data.reconstructed) && (
+        <p class="notice notice-thin">{tr('proj.reconstructed')}</p>
+      )}
+
+      <div class="pcards">
         {cases.map((c) => (
-          <a class="card" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
-            <p class="card-metric">{c.data.headline}</p>
-            <h2>{c.data.title}</h2>
-            <p>{c.data.description}</p>
-            <ul class="chips">{c.data.tags.map((tag) => <li class="chip">{tag}</li>)}</ul>
-            <span class="card-go">{tr('proj.read')}<Fragment set:html={arrow} /></span>
-          </a>
+          <article class="pcard">
+            <a class="pcard-link" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
+              <span class="pcard-shot">
+                <img
+                  src={shotSrc(c.data.slug, c.data.shots[0].file)}
+                  width={SHOT_W}
+                  height={SHOT_H}
+                  loading="lazy"
+                  decoding="async"
+                  alt={c.data.shots[0].alt}
+                />
+                <span class="pcard-tag">{c.data.system}</span>
+                <span class="pcard-count tnum">{c.data.shots.length} {tr('proj.screens')}</span>
+              </span>
+
+              <span class="pcard-body">
+                <span class="card-metric">{c.data.headline}</span>
+                <h2>{c.data.title}</h2>
+                <span class="pcard-desc">{c.data.description}</span>
+                <span class="pcard-meta tnum">{c.data.period} · {c.data.role.split(' · ')[0]}</span>
+                <span class="card-go">{tr('proj.read')}<Fragment set:html={arrow} /></span>
+              </span>
+            </a>
+            <ul class="chips pcard-chips">{c.data.tags.map((tag) => <li class="chip">{tag}</li>)}</ul>
+          </article>
         ))}
       </div>
     </section>

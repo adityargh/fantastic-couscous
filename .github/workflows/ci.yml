@@ -30,16 +30,15 @@ jobs:
 
       - name: Pastikan setiap halaman benar-benar ter-generate
         run: |
+          slugs="antrian-inbound-frozen avas ex-analysis-system \
+                 occupancy-monitoring-alert outbound-operations-tower relabel-productivity"
+          cases=""
+          for s in $slugs; do cases="$cases projects/$s/index.html id/projects/$s/index.html"; done
           for f in index.html about/index.html projects/index.html \
-                   projects/inventory-accuracy/index.html \
-                   projects/quality-system/index.html \
-                   projects/ops-analytics/index.html \
+                   $cases \
                    contact/index.html contact/success/index.html contact/error/index.html \
                    cv/index.html \
                    id/index.html id/about/index.html id/projects/index.html \
-                   id/projects/inventory-accuracy/index.html \
-                   id/projects/quality-system/index.html \
-                   id/projects/ops-analytics/index.html \
                    id/contact/index.html id/contact/success/index.html \
                    id/contact/error/index.html id/cv/index.html \
                    404.html sitemap.xml robots.txt resume.json \
@@ -48,6 +47,22 @@ jobs:
             test -s "dist/$f" || { echo "::error::dist/$f tidak dihasilkan"; exit 1; }
           done
           echo "Semua halaman dan aset ada."
+
+      # Tangkapan antarmuka di-commit, bukan dibangkitkan saat build (ADR-013),
+      # jadi frontmatter dan berkasnya bisa menyimpang diam-diam. Skrip ini
+      # membaca daftar berkas DARI frontmatter, sehingga studi kasus baru tidak
+      # menuntut siapa pun mengingat untuk memperbarui daftar di CI.
+      - name: Tangkapan antarmuka lengkap dan tidak yatim
+        run: node scripts/check-shots.mjs dist
+
+      # Setiap gambar wajib punya teks alternatif. Situs yang menjual ketelitian
+      # tidak boleh mengirim <img> tanpa alt.
+      - name: Tidak ada gambar tanpa alt
+        run: |
+          if grep -rIoE '<img [^>]*>' dist --include='*.html' | grep -v 'alt="'; then
+            echo "::error::ada <img> tanpa atribut alt"; exit 1
+          fi
+          echo "Semua gambar punya alt."
 
       # Penjaga struktural untuk jebakan ADR-009 #1: rute yang salah bentuk
       # membuang SELURUH halaman bahasa Indonesia tanpa galat apa pun. Daftar

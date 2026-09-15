@@ -565,6 +565,106 @@ main { display: block; }
 .card:hover .card-go svg { transform: translateX(3px); }
 .card-go svg { transition: transform 0.18s var(--ease); }
 
+/* ------------------------------------------- 10a2. Katalog proyek bergambar -- */
+
+/* Enam proyek pada 1120 px = dua kolom. Tiga kolom akan memaksa sampul ke
+   ~350 px, dan pada lebar itu tangkapan 1280 px berhenti menyampaikan apa pun
+   selain "ada sebuah dashboard". Kartu yang lebih sedikit tapi terbaca
+   mengalahkan kartu yang lebih banyak tapi tidak. */
+.pcards {
+  display: grid; gap: var(--s5);
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+}
+/* Varian beranda: tiga sorotan, jadi tiga kolom. */
+.pcards-3 { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: var(--s4); }
+
+.pcard {
+  display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r3);
+  overflow: hidden;
+  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease),
+    border-color 0.18s var(--ease);
+}
+.pcard:hover {
+  transform: translateY(-3px); box-shadow: var(--shadow-3);
+  border-color: color-mix(in srgb, var(--brand) 34%, var(--line));
+}
+.pcard-link {
+  display: flex; flex-direction: column; text-decoration: none; color: inherit; flex: 1;
+}
+.pcard-link:hover { color: inherit; }
+
+.pcard-shot {
+  position: relative; display: block; background: #070b11;
+  border-bottom: 1px solid var(--line);
+}
+/* aspect-ratio + width/height pada <img> = nol pergeseran tata letak. */
+.pcard-shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; }
+.pcard-tag, .pcard-count {
+  position: absolute; bottom: var(--s3); display: inline-flex; align-items: center;
+  height: 24px; padding: 0 10px; border-radius: 999px;
+  font-size: var(--t--1); font-weight: 650; letter-spacing: 0.01em;
+  background: #070b11cc; color: #e8eef7; border: 1px solid #ffffff24;
+}
+.pcard-tag { left: var(--s3); }
+.pcard-count { right: var(--s3); color: #a5b3c6; }
+
+.pcard-body { display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); flex: 1; }
+.pcard-body .card-metric { display: inline-flex; }
+.pcard-body h2 { font-size: var(--t-1); letter-spacing: -0.022em; font-weight: 700; }
+.pcard-desc { color: var(--ink-2); font-size: 0.94rem; }
+.pcard-meta { color: var(--ink-3); font-size: 0.86rem; }
+.pcard-body .card-go { margin-top: auto; }
+.pcard:hover .card-go svg { transform: translateX(3px); }
+.pcard-chips { padding: 0 var(--s5) var(--s5); }
+
+/* Pemberitahuan tipis: sama seperti .notice tapi tanpa bobot visual sebuah
+   peringatan — ini keterangan, bukan galat. */
+.notice-thin {
+  border-left-color: var(--line-2); font-size: 0.89rem;
+  padding: var(--s3) var(--s4); margin-block: var(--s5);
+}
+
+/* ---------------------------------------------- 10a3. Galeri antarmuka -- */
+
+.gallery { margin-bottom: var(--s8); }
+.gallery-head { margin-bottom: var(--s4); }
+.gallery-head h2 { font-size: var(--t-2); scroll-margin-top: 88px; }
+.gallery-head .muted { margin-top: var(--s2); max-width: var(--measure); }
+
+.shots { display: grid; gap: var(--s5); grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); }
+.shot { margin: 0; display: flex; flex-direction: column; gap: var(--s3); }
+
+.shot-frame {
+  position: relative; display: block; border-radius: var(--r2); overflow: hidden;
+  border: 1px solid var(--line); background: #070b11; line-height: 0;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+.shot-frame img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; }
+.shot-frame:hover { border-color: var(--brand); box-shadow: var(--shadow-2); }
+
+/* Petunjuk perbesaran. Tautannya menuju berkas PNG itu sendiri, sehingga
+   pembesaran ditangani peramban: bisa di-zoom, bisa dibuka di tab baru, dan
+   tetap bekerja tanpa satu baris JavaScript pun (ADR-013). */
+.shot-zoom {
+  position: absolute; right: var(--s3); bottom: var(--s3);
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: #070b11cc; color: #e8eef7; border: 1px solid #ffffff24;
+  opacity: 0; transition: opacity 0.18s var(--ease);
+}
+.shot-frame:hover .shot-zoom, .shot-frame:focus-visible .shot-zoom { opacity: 1; }
+@media (hover: none) { .shot-zoom { opacity: 1; } }
+
+.shot figcaption {
+  display: flex; gap: var(--s3); font-size: 0.89rem; color: var(--ink-2); line-height: 1.55;
+}
+.shot-n {
+  flex: none; font-family: var(--mono); font-size: var(--t--1); font-weight: 650;
+  color: var(--brand); padding-top: 1px;
+}
+.shot figcaption b { display: block; color: var(--ink); font-weight: 650; margin-bottom: 2px; }
+
 /* ------------------------------------------------------- 10b. Studi kasus -- */
 
 .case-layout { display: grid; gap: var(--s7); grid-template-columns: minmax(0, 1fr); }
@@ -730,6 +830,7 @@ tbody tr:first-child td { border-top: 0; }
  * Di kertas, kepadatan ADALAH keterbacaan: recruiter memindai, bukan membaca.
  */
 @media print {
+  .gallery, .pcard-shot, .shot-frame { display: none !important; }
   :root {
     --ground: #fff; --surface: #fff; --surface-2: #fff; --surface-3: #fff;
     --ink: #000; --ink-2: #1a1a1a; --ink-3: #444;

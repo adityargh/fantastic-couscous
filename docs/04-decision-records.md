@@ -451,6 +451,93 @@ Diverifikasi: `SITE_URL=https://contoh.workers.dev pnpm build` mengubah canonica
 
 ---
 
+## ADR-013 — Katalog enam proyek nyata dengan tangkapan antarmuka
+
+**Status:** Diterima · 15 Sep 2026
+
+**Keputusan:** Mengganti tiga studi kasus generik dengan **enam sistem nyata** yang dibangun pemilik di ASTRO, dan memberi setiap studi kasus **tepat empat tangkapan antarmuka** yang dibangkitkan sebagai **rekonstruksi berdata contoh** dari satu skrip nol-dependensi.
+
+**Konteks:** Tiga studi kasus sebelumnya ditulis dari cakupan jabatan, bukan dari artefak. Semuanya benar, tapi tak satu pun bisa ditunjuk: tidak ada nama sistem, tidak ada antarmuka, tidak ada yang bisa dibuka. Untuk profil yang menjual kemampuan **membangun perkakas operasional**, portofolio tanpa satu pun tampilan perkakas adalah portofolio yang menghilangkan buktinya sendiri.
+
+Pemilik menetapkan enam sistem: `antrian-inbound-frozen`, `ex-analysis-system`, `occupancy-monitoring-alert`, `outbound-operations-tower`, `relabel-productivity`, dan **AVAS** (Astro Validation Absence System).
+
+Dua batasan mengikat sejak awal. Pertama, **sistem aslinya milik perusahaan** dan tangkapan layarnya tidak boleh dipublikasikan. Kedua, aturan ADR-010 tetap berlaku: tidak ada angka hasil yang dikarang.
+
+### 1. Tangkapan layar: rekonstruksi, bukan tangkapan asli
+
+| Opsi | Alasan penolakan |
+| :--- | :--- |
+| **Tangkapan sistem asli** | Data internal perusahaan. Menyensor pun tetap membocorkan struktur, penamaan, dan volume. Tidak bisa dipublikasikan, titik |
+| **Mockup abstrak / wireframe** | Tidak menunjukkan apa pun tentang keputusan desainnya. Kotak abu-abu bukan bukti |
+| **Tanpa gambar sama sekali** | Status quo yang sedang diperbaiki |
+| **Foto lantai gudang** | Menggambarkan tempat kerjanya, bukan sistem yang dibangun. Salah objek |
+
+Yang dipilih: **merekonstruksi tata letaknya dengan data contoh**. Setiap bingkai membawa penanda `Reconstruction · sample data` **di dalam gambar**, dan setiap halaman yang menampilkannya membawa pemberitahuan tertulis. Tidak ada nama orang, pemasok, atau angka nyata; karyawan muncul sebagai `EMP-0412`, pemasok sebagai `Supplier A`.
+
+Penanda ditaruh **di dalam gambar**, bukan hanya di halaman, karena gambar akan beredar terpisah dari halamannya — diunduh, ditempel ke presentasi, dibagikan sebagai tautan. Keterangan yang hanya ada di HTML tidak ikut pergi bersama berkasnya.
+
+`reconstructed` di frontmatter **wajib diisi**, tanpa nilai bawaan. Menampilkan tangkapan asli kelak harus menjadi keputusan yang diketik seseorang, bukan hasil sebuah default yang terlupa.
+
+### 2. Tepat empat, bukan "minimal empat"
+
+Skema menolak lima. Katalog memberi setiap proyek bingkai sebesar yang sama, dan proyek dengan lima panel merusak keseragaman itu tanpa menambah informasi. Kalau sebuah sistem punya lebih dari empat layar penting, memilih empat yang menjelaskan alurnya adalah keputusan editorial — dan keputusan editorial memang sebaiknya dipaksa oleh skema, bukan diserahkan pada suasana hati saat menulis.
+
+### 3. Satu set gambar untuk dua bahasa
+
+Label antarmuka berbahasa Inggris pada **kedua** versi bahasa. `alt` dan keterangan — yang memikul maknanya — tetap dilokalkan.
+
+Menggandakan 24 gambar menjadi 48 demi label tombol berarti melipatduakan repositori, waktu render, dan permukaan yang bisa menyimpang, demi perbedaan yang tidak dibaca siapa pun: perkakas operasional di Indonesia memang lazim berlabel Inggris. Biaya nyata, hasil nol.
+
+### 4. Perbesaran gambar: tautan ke berkasnya, bukan lightbox
+
+| Opsi | Alasan penolakan |
+| :--- | :--- |
+| **Lightbox JavaScript** | Melanggar anggaran nol-JS (ADR-009). Menuntut jebakan fokus, penanganan Escape, dan pengembalian fokus agar setara |
+| **Lightbox CSS `:target`** | Nol JS, tapi tetap tanpa jebakan fokus dan tanpa Escape — aksesibilitas yang setengah jadi, plus 4 simpul DOM tambahan per studi kasus |
+
+Yang dipilih: `<a href="/shots/…png">` biasa. Peramban sudah punya penampil gambar yang bisa di-zoom, bisa disimpan, bisa dibuka di tab baru, dan bekerja tanpa satu baris JavaScript. Kode paling mudah dirawat adalah kode yang tidak ditulis.
+
+### 5. Aturan visualisasi yang ditegakkan di dalam skrip
+
+Panel-panel itu memuat grafik sungguhan, jadi grafiknya tunduk pada aturan yang sama seperti bagian situs lain:
+
+| Aturan | Penerapan |
+| :--- | :--- |
+| Kategori **berurut** memakai satu rona, terang → gelap | Pita umur, pita kedaluwarsa, tahapan corong — ramp biru 4 langkah, tervalidasi terhadap permukaan gelap |
+| Deret **tunggal** memakai satu warna | Bukan gradasi menurut besar: itu menyandikan ulang panjang batang ke dalam rona dan membakar satu-satunya kanal yang tersisa |
+| Warna status **dicadangkan** | `good / warning / serious / critical` tidak pernah dipinjam sebagai warna seri, dan tidak pernah berdiri tanpa label teks di sebelahnya |
+| **Tidak ada sumbu ganda** | Waktu tunggu (menit) dan kedatangan (muatan) menjadi dua grafik bersumbu x sama, bukan satu grafik berdua skala. Pareto menampilkan persentase kumulatif sebagai **nilai**, bukan sebagai sumbu kedua |
+| Small multiples mengalahkan empat garis | Pertanyaannya "zona ini terhadap ambangnya", bukan "zona mana yang tertinggi" — empat panel kecil satu rona menjawabnya; satu grafik empat garis tidak |
+
+### 6. Aset di-commit, bukan dibangkitkan saat build
+
+Mengikuti pola OG image (ADR-010) dan PDF CV (ADR-011): `scripts/shots.mjs` dijalankan **manual**, hasilnya masuk repositori. Membangkitkan 24 PNG di setiap deploy berarti membayar unduhan Chromium ±130 MB demi berkas yang berubah beberapa kali seumur situs.
+
+Harga yang dibayar adalah kemungkinan menyimpang, jadi penjaganya dipasang: `scripts/check-shots.mjs` membaca daftar berkas **dari frontmatter** dan menolak berkas yang hilang, berkas yatim, jumlah selain empat, serta versi EN dan ID yang merujuk berkas berbeda. Daftarnya tidak pernah ditulis dua kali, sehingga studi kasus ketujuh tidak menuntut siapa pun mengingat untuk memperbarui CI.
+
+**Logika Chromium dipakai bersama.** `scripts/lib/shoot.mjs` diekstrak dari `og.mjs`; dua salinan logika kompensasi bingkai jendela dan pemangkasan PNG akan menyimpang diam-diam, satu modul bersama tidak bisa.
+
+### 7. Konsekuensi yang tidak menyenangkan: CV menjadi 2 halaman
+
+ADR-011 menghasilkan CV **1 halaman**. Menambahkan pencapaian yang menyebut sistem-sistem ini mendorongnya menjadi **2 halaman**, dan ini dicatat alih-alih disembunyikan.
+
+Dua jalan ditolak. **Menyembunyikan bullet saat cetak** membuat PDF dan halaman web menjadi dokumen berbeda tanpa pembacanya tahu. **Merapatkan CSS cetak lagi** berarti turun dari 9,4pt/1,34 — di bawah itu kepadatan berhenti menjadi keterbacaan. ADR-011 sendiri sudah mengantisipasi ini: aturan `break-inside: avoid` ditulis persis "bila konten bertambah".
+
+Batas CI tetap 1–2 halaman dan tetap ditegakkan. Menghapus pekerjaan nyata demi satu halaman adalah pertukaran yang salah arah.
+
+**Konsekuensi:**
+- ✅ Enam sistem nyata, masing-masing dengan empat tampilan antarmuka — portofolio kini bisa ditunjuk, bukan hanya dibaca
+- ✅ Kerahasiaan perusahaan terjaga: nol data internal, penanda ada di dalam gambar maupun di halaman
+- ✅ Katalog, kartu beranda, dan pratinjau tautan studi kasus semuanya memakai tangkapan yang sama — satu jalur berkas, satu helper (`shotSrc`)
+- ✅ `width`/`height` pada setiap `<img>` + `aspect-ratio` = nol pergeseran tata letak; `loading="lazy"` menjaga permintaan pertama tetap ringan
+- ✅ Penjaga CI baru: kelengkapan tangkapan, berkas yatim, dan `<img>` tanpa `alt`
+- ⚠️ Repositori bertambah ±1,9 MB (24 PNG, rata-rata ±79 KB). Di-cache seminggu dengan revalidasi sebulan lewat `_headers`; tidak ada satu pun yang diminta pada permintaan pertama halaman beranda
+- ⚠️ CV PDF kini 2 halaman (lihat §7)
+- ⚠️ Menjalankan ulang `pnpm shots` menuntut Chromium sistem. Sama seperti `pnpm og` dan `pnpm pdf` — dan sama seperti keduanya, hasilnya di-commit sehingga build tetap nol-dependensi
+- ⚠️ Rekonstruksi adalah rekonstruksi. Ia menunjukkan keputusan tata letak dan pilihan indikator dengan jujur, tapi ia **bukan** tangkapan sistem produksi, dan halamannya mengatakan itu
+
+---
+
 ## Template ADR Baru
 
 Salin blok ini setiap kali membuat keputusan arsitektural yang signifikan. Perubahan ruang lingkup **harus** melewati sini, bukan diputuskan diam-diam di tengah implementasi.

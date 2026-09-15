@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Layout from '../../Layout.astro';
 import {
   CONTACT, FALLBACK_SITE, langPaths, hrefFor, profileOf, periodLabel,
-  tenures, durationLabel, monthsBetween, t, type Lang,
+  tenures, durationLabel, monthsBetween, shotSrc, SHOT_W, SHOT_H, t, type Lang,
 } from '../../site';
 
 export const getStaticPaths = langPaths;
@@ -181,15 +181,30 @@ const arrow =
             {tr('proj.all')}<Fragment set:html={arrow} />
           </a>
         </div>
-        <div class="cards">
+        <div class="pcards pcards-3">
           {featured.map((c) => (
-            <a class="card" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
-              <p class="card-metric">{c.data.headline}</p>
-              <h3>{c.data.title}</h3>
-              <p>{c.data.description}</p>
-              <ul class="chips">{c.data.tags.map((tag) => <li class="chip">{tag}</li>)}</ul>
-              <span class="card-go">{tr('proj.read')}<Fragment set:html={arrow} /></span>
-            </a>
+            <article class="pcard">
+              <a class="pcard-link" href={hrefFor(lang, `/projects/${c.data.slug}`)}>
+                <span class="pcard-shot">
+                  <img
+                    src={shotSrc(c.data.slug, c.data.shots[0].file)}
+                    width={SHOT_W}
+                    height={SHOT_H}
+                    loading="lazy"
+                    decoding="async"
+                    alt={c.data.shots[0].alt}
+                  />
+                  <span class="pcard-tag">{c.data.system}</span>
+                  <span class="pcard-count tnum">{c.data.shots.length} {tr('proj.screens')}</span>
+                </span>
+                <span class="pcard-body">
+                  <span class="card-metric">{c.data.headline}</span>
+                  <h3>{c.data.title}</h3>
+                  <span class="pcard-desc">{c.data.description}</span>
+                  <span class="card-go">{tr('proj.read')}<Fragment set:html={arrow} /></span>
+                </span>
+              </a>
+            </article>
           ))}
         </div>
       </section>

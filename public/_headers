@@ -15,5 +15,12 @@
 /og/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+# Tangkapan antarmuka: 24 berkas, ±1,9 MB total, dan isinya hanya berubah bila
+# scripts/shots.mjs dijalankan ulang — yaitu beberapa kali seumur situs. Nama
+# berkasnya stabil (tidak ber-hash), jadi cache panjang dipasangkan dengan
+# revalidasi mingguan alih-alih `immutable`.
+/shots/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
+
 /favicon.svg
   Cache-Control: public, max-age=604800

@@ -12,7 +12,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "pdf": "node scripts/pdf.mjs",
-    "og": "node scripts/og.mjs"
+    "og": "node scripts/og.mjs",
+    "shots": "node scripts/shots.mjs",
+    "check:shots": "node scripts/check-shots.mjs"
   },
   "dependencies": {
     "astro": "^5.14.1"

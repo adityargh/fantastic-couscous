@@ -6,8 +6,9 @@
     "Bullet pencapaian menggambarkan cakupan jabatan dan durasi yang terverifikasi. Ganti dengan hasil nyata Anda bila angkanya boleh publik.",
     "Tools per peran diisi konservatif. Tambahkan SQL / Power BI / nama WMS yang sebenarnya bila benar.",
     "Studi kasus memuat daftar 'yang saya ukur'. Tabel sebelum/sesudah sengaja kosong sampai Anda memberi angka yang boleh dipublikasikan.",
-    "Tetapkan contact.web3formsKey agar form kontak aktif (email langsung sudah tersedia sebagai kanal utama).",
-    "Setelah semua di atas diperiksa: set draft:false untuk membuka pengindeksan."
+    "Enam studi kasus merujuk sistem nyata yang Anda bangun. Periksa periode dan peran tiap studi kasus terhadap catatan Anda sendiri, lalu sesuaikan bila ada yang meleset.",
+    "Tangkapan antarmuka di public/shots/ adalah REKONSTRUKSI dengan data contoh, bukan tangkapan sistem asli. Jangan pernah menggantinya dengan tangkapan asli tanpa izin tertulis dari perusahaan.",
+    "Tetapkan contact.web3formsKey agar form kontak aktif (email langsung sudah tersedia sebagai kanal utama)."
   ],
   "contact": {
     "web3formsKey": "",
@@ -66,7 +67,9 @@
         "summary": "I own the analytics layer of warehouse operations: what gets measured on the floor, how it is reported, and which numbers a shift lead can actually act on before the shift ends.",
         "achievements": [
           "Supervise warehouse operations analytics for the Jakarta hub, consolidating inbound, storage and outbound activity into 1 reporting view shared across shifts.",
-          "Design indicators against 4 years of floor-level quality and inventory work, so each number maps to a decision someone on shift is able to make."
+          "Design indicators against 4 years of floor-level quality and inventory work, so each number maps to a decision someone on shift is able to make.",
+          "Built the outbound control tower that replaced 4 separate stage trackers with 1 shift view, reporting a projected finish rather than a remaining count.",
+          "Added zone occupancy alerting on 3 thresholds per zone and moved absence validation from 1 month-end reconciliation to a same-day flow, so headcount-based indicators stopped being revised weeks after the fact."
         ],
         "tools": ["Operational reporting", "Spreadsheet modelling", "WMS", "Dashboarding"]
       },
@@ -98,7 +101,8 @@
         "summary": "Quality moved from inspection at the line to governance across the site: documentation, audit readiness, and corrective action that actually closes.",
         "achievements": [
           "Held site-wide quality governance for 10 months — standard documentation, internal audit readiness and corrective-action follow-through.",
-          "Maintained 1 controlled set of quality documents as the reference for every shift, in place of per-team interpretation of the same standard."
+          "Maintained 1 controlled set of quality documents as the reference for every shift, in place of per-team interpretation of the same standard.",
+          "Built the EX analysis system — stock sorted into 4 days-to-expiry bands feeding 1 weekly action list — and a frozen-inbound queue board across 3 receiving lanes measured against the cold-chain window."
         ],
         "tools": ["Quality management system", "Internal audit", "CAPA", "SOP design"]
       },
@@ -114,7 +118,8 @@
         "summary": "Led the QA team through the operation's fastest-growing stretch: inspection standards, non-conformance handling, and the training that keeps both consistent when volume rises.",
         "achievements": [
           "Led quality assurance for 25 consecutive months, owning inspection standards, non-conformance handling and corrective action across shifts.",
-          "Trained incoming QA staff against 1 written standard so inspection outcomes stay comparable regardless of who is on shift."
+          "Trained incoming QA staff against 1 written standard so inspection outcomes stay comparable regardless of who is on shift.",
+          "Put 1 standard rate and a short cause-code list on relabelling work that had 0 prior measurement, so the rework could be planned and its recurring sources challenged upstream."
         ],
         "tools": ["Inspection standards", "Non-conformance handling", "Root cause analysis", "Team training"]
       },
@@ -259,7 +264,9 @@
         "summary": "Saya memegang lapisan analitik operasional gudang: apa yang diukur di lantai, bagaimana dilaporkan, dan angka mana yang benar-benar bisa ditindaklanjuti seorang shift lead sebelum shift berakhir.",
         "achievements": [
           "Menyupervisi analitik operasional gudang untuk hub Jakarta, menyatukan aktivitas inbound, penyimpanan, dan outbound ke dalam 1 tampilan laporan lintas shift.",
-          "Merancang indikator berbekal 4 tahun kerja langsung di kualitas dan inventori, sehingga setiap angka terhubung ke keputusan yang bisa diambil orang di shift."
+          "Merancang indikator berbekal 4 tahun kerja langsung di kualitas dan inventori, sehingga setiap angka terhubung ke keputusan yang bisa diambil orang di shift.",
+          "Membangun control tower outbound yang menggantikan 4 tracker tahapan terpisah dengan 1 tampilan shift, melaporkan proyeksi waktu selesai alih-alih sisa order.",
+          "Menambahkan peringatan okupansi pada 3 ambang per zona dan memindahkan validasi ketidakhadiran dari 1 rekonsiliasi akhir bulan ke alur hari yang sama, agar indikator berbasis headcount berhenti direvisi berpekan-pekan kemudian."
         ],
         "tools": ["Pelaporan operasional", "Pemodelan spreadsheet", "WMS", "Dashboard"]
       },
@@ -291,7 +298,8 @@
         "summary": "Kualitas bergeser dari inspeksi di lini menjadi tata kelola di seluruh situs: dokumentasi, kesiapan audit, dan tindakan korektif yang benar-benar tertutup.",
         "achievements": [
           "Memegang tata kelola kualitas tingkat situs selama 10 bulan — dokumentasi standar, kesiapan audit internal, dan penuntasan tindakan korektif.",
-          "Memelihara 1 set dokumen kualitas terkendali sebagai rujukan seluruh shift, menggantikan tafsir masing-masing tim atas standar yang sama."
+          "Memelihara 1 set dokumen kualitas terkendali sebagai rujukan seluruh shift, menggantikan tafsir masing-masing tim atas standar yang sama.",
+          "Membangun EX analysis system — stok dipilah ke 4 pita sisa hari yang memasok 1 daftar tindakan mingguan — dan papan antrian inbound frozen untuk 3 lajur penerimaan yang diukur terhadap jendela rantai dingin."
         ],
         "tools": ["Sistem manajemen kualitas", "Audit internal", "CAPA", "Desain SOP"]
       },
@@ -307,7 +315,8 @@
         "summary": "Memimpin tim QA melewati periode pertumbuhan tercepat operasi: standar inspeksi, penanganan ketidaksesuaian, dan pelatihan yang menjaga keduanya tetap konsisten saat volume naik.",
         "achievements": [
           "Memimpin quality assurance selama 25 bulan berturut-turut, memegang standar inspeksi, penanganan ketidaksesuaian, dan tindakan korektif lintas shift.",
-          "Melatih QA staff baru dengan 1 standar tertulis agar hasil inspeksi tetap sebanding siapa pun yang bertugas."
+          "Melatih QA staff baru dengan 1 standar tertulis agar hasil inspeksi tetap sebanding siapa pun yang bertugas.",
+          "Memasang 1 laju standar dan daftar kode sebab yang pendek pada pekerjaan relabel yang sebelumnya punya 0 pengukuran, agar rework bisa direncanakan dan sumber berulangnya ditantang di hulu."
         ],
         "tools": ["Standar inspeksi", "Penanganan ketidaksesuaian", "Root cause analysis", "Pelatihan tim"]
       },
